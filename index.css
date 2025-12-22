@@ -1,6 +1,7 @@
 body {
   align-items: center;
   text-align: center;
+  background-color: #fff2dc;
 }
 
 h1 {
@@ -10,9 +11,50 @@ h1 {
 button {
   margin: 5px;
   padding: 10px 15px;
-  border: 1px solid #000000;
-  background-color: #f0f0f0;
+  border: 2px solid #000000;
+  border-radius: 5px;
+  background-color: #ce9b9b;
   display: inline-block;
+}
+
+
+.precioso {
+  background: #6BCF9A;
+}
+
+.precioso:hover {
+  background-color: #5ABB89;
+  transition: background-color 0.2s ease-in;
+  cursor:pointer;
+}
+
+.precioso:active {
+  background-color: #3E9F6E;
+  transition: background-color 0.2s ease-in;
+  cursor:pointer;
+}
+
+.feo
+{
+  background-color: #F28B82;
+}
+
+.feo:hover {
+  background-color: #E57373;
+  transition: background-color 0.2s ease-in;
+  cursor:pointer;
+}
+
+.feo:active {
+  background-color: #C94A4A;
+  transition: background-color 0.2s ease-in;
+  cursor:pointer;
+}
+
+.name-button:hover, .name-button:focus {
+  background-color: #ffee05;
+  transition: background-color 0.2s ease-in;
+  cursor:pointer;
 }
 
 div {
@@ -22,14 +64,21 @@ div {
 .card {
   display: inline-block;
   vertical-align: top;
-  border: 1px solid #030303;
-  padding: 10px;
+  border: 2px solid #E4E6E1;  
+  border-radius: 16px;
+  padding: 16px;
   max-width: 450px;
   text-align: center;
   margin: 10px;
+  background-color: #FFFDF9;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
 img {
   max-width: 100%;
   max-height: 150px;
+  margin-bottom: 35px;    
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
