@@ -1,7 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
 body {
   align-items: center;
   text-align: center;
   background-color: #fff2dc;
+  font-family: "Lobster", sans-serif;
 }
 
 h1 {
@@ -13,8 +15,20 @@ button {
   padding: 10px 15px;
   border: 2px solid #000000;
   border-radius: 5px;
-  background-color: #ce9b9b;
+  background-color: #fdf4be;
   display: inline-block;
+  font-family: "Lobster", sans-serif;
+}
+
+button:hover, button:active {
+  cursor: pointer;
+}
+
+#name-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 10px 0;
 }
 
 .precioso {
@@ -24,13 +38,11 @@ button {
 .precioso:hover {
   background-color: #5ABB89;
   transition: background-color 0.2s ease-in;
-  cursor:pointer;
 }
 
 .precioso:active {
   background-color: #3E9F6E;
   transition: background-color 0.2s ease-in;
-  cursor:pointer;
 }
 
 .feo
@@ -41,29 +53,26 @@ button {
 .feo:hover {
   background-color: #E57373;
   transition: background-color 0.2s ease-in;
-  cursor:pointer;
 }
 
 .feo:active {
   background-color: #C94A4A;
   transition: background-color 0.2s ease-in;
-  cursor:pointer;
 }
 
-.name-button:hover, .name-button:focus, #add-1-perrico:hover, #add-1-perrico:focus, #add-5-perricos:hover, #add-5-perricos:focus {
-  background-color: #ff8383;
+.name-button:hover, .name-button:focus, #add-1-perrico:hover, #add-1-perrico:active, #add-5-perricos:hover, #add-5-perricos:active, .filter-button:hover, .filter-button:active {
+  background-color: #fcefa4;
   transition: background-color 0.2s ease-in;
-  cursor:pointer;
 }
 
 .selected {
   border: 4px solid #000000;
-  background-color: #ff8383;
+  background-color: #fcefa4;
 }
 
-.selected:hover, .selected:focus {
-  border: none;
-  background-color: #ce9b9b;
+.selected:hover {
+  border: 3px solid #000000;
+  background-color: #fdf4be;
 }
 
 div {

@@ -10,10 +10,9 @@ function renderPerricoArray() {
   perricosArray.forEach((dog, index) => {
     const htmlAdd = (selected === null || dog.name === selected)  ? `<div class="card">
       <img src="${dog.img}" alt="Perro" />
-      <button class="name-button ${dog.name === selected ? 'selected' : ''}">${dog.name}</button>
-      <br />
-      <p name="${dog.name}">❤️ 🤮</p>
-      <button class="precioso">Preciosísimo</button> <button class="feo">Feísisimo</button>
+      <p class="name-text">${dog.name}</p>
+      <p name="${dog.name}"></p>
+      <button class="precioso">Precioso</button> <button class="feo">Feo</button>
     </div>` : '';
 
     console.log('innerHtml posición', index, dogList.innerHTML);
@@ -21,7 +20,24 @@ function renderPerricoArray() {
     dogList.innerHTML += htmlAdd;
   });
 
+  renderPerricosNameButtons();
   addListeners();
+}
+
+function renderPerricosNameButtons() {
+  const nameCounts = {};
+
+  perricosArray.forEach(dog => {
+    nameCounts[dog.name] = nameCounts[dog.name] === undefined ? 1 : nameCounts[dog.name] + 1;
+  });
+
+  const nameButtonsDiv = document.querySelector('#name-buttons');
+
+  nameButtonsDiv.innerHTML = '';
+  Object.keys(nameCounts).forEach(name => {
+    const count = nameCounts[name];
+    nameButtonsDiv.innerHTML += `<button class="filter-button ${selected === name ? 'selected' : ''}" data-name="${name}">${name} (${count})</button>`
+  });
 }
 
 const addPerrico = async () => {
@@ -44,13 +60,28 @@ const add5Perricos = async () => {
 //Añadir like a la votación
 function addLike(element) 
 {
-  element.textContent = "❤️ " + element.textContent;
+  if(element.textContent.trim() === "❤️")
+  {
+    element.textContent = "" ;
+  }
+  else
+  {
+    element.textContent = "❤️" ;
+  }
+  
 }
 
 //Añadir dislike a la votación
 function addDislike(element) 
 {
-  element.textContent =  element.textContent + "🤮";
+  if(element.textContent.trim() === "🤮")
+  {
+    element.textContent = "" ;
+  }
+  else
+  {
+    element.textContent = "🤮" ;
+  }
 }
 
 //Obtener nombre aleatorio de perrico
@@ -79,7 +110,7 @@ function addListeners()
   document.querySelectorAll('.precioso').forEach(btn => {
     btn.addEventListener('click', function () {
       const card = btn.parentElement;
-      const element = card.querySelector('p');
+      const element = card.querySelector('p[name]');
       addLike(element);
     });
   });
@@ -87,14 +118,14 @@ function addListeners()
   document.querySelectorAll('.feo').forEach(btn => {
     btn.addEventListener('click', function () {
       const card = btn.parentElement;
-      const element = card.querySelector('p');
+      const element = card.querySelector('p[name]');
       addDislike(element);
     });
   });
 
-  document.querySelectorAll('.name-button').forEach(p => {
-    p.addEventListener('click', function () {
-      selectDogs(p.textContent);
+  document.querySelectorAll('.filter-button').forEach(btn => {
+    btn.addEventListener('click', function () {
+      selectDogs(btn.dataset.name);
     });
   });
 }
