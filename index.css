@@ -32,7 +32,7 @@ button:hover, button:active {
 }
 
 .precioso {
-  background: #6BCF9A;
+  background-color: #6BCF9A;
 }
 
 .precioso:hover {
@@ -60,19 +60,39 @@ button:hover, button:active {
   transition: background-color 0.2s ease-in;
 }
 
-.name-button:hover, .name-button:focus, #add-1-perrico:hover, #add-1-perrico:active, #add-5-perricos:hover, #add-5-perricos:active, .filter-button:hover, .filter-button:active {
+#add-1-perrico:hover, #add-1-perrico:active, #add-5-perricos:hover, #add-5-perricos:active, .filter-button:hover, .filter-button:active {
   background-color: #fcefa4;
   transition: background-color 0.2s ease-in;
 }
 
-.selected {
+.filter-button-selected {
   border: 4px solid #000000;
   background-color: #fcefa4;
 }
 
-.selected:hover {
+.filter-button-selected:hover {
   border: 3px solid #000000;
   background-color: #fdf4be;
+}
+
+.precioso-selected {
+  border: 4px solid #000000;
+  background-color: #29b26e;
+}
+
+.precioso-selected:hover {
+  border: 3px solid #000000;
+  background-color: #33ad70;
+}
+
+.feo-selected {
+  border: 4px solid #000000;
+  background-color: #d43e3e;
+}
+
+.feo-selected:hover {
+  border: 3px solid #000000;
+  background-color: #d24545;
 }
 
 div {

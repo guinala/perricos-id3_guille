@@ -1,6 +1,7 @@
 const perricosArray = [];
-const perricosNames = ['Firulais', 'Nomuerde', 'Luna', 'Thor', 'Pastelito de Fresa', 'Rocky', 'Duke', 'Buddy', 'Loki', 'Nara', 'Destructor de Mundos'];
-let selected = null;
+const perricosNames = ['Firulais', 'Luna', 'Thor', 'Pastelito de Fresa', 'Rocky', 'Duke', 'Buddy', 'Loki', 'Nara'];
+let selectedDogs = [];
+let idDogCounter = 0;
 // addPerrico();
 
 function renderPerricoArray() {
@@ -8,11 +9,11 @@ function renderPerricoArray() {
   dogList.innerHTML = '';
 
   perricosArray.forEach((dog, index) => {
-    const htmlAdd = (selected === null || dog.name === selected)  ? `<div class="card">
+    const htmlAdd = (selectedDogs.length === 0 || selectedDogs.includes(dog.name.toLowerCase()))  ? `<div class="card" id="${dog.id}">
       <img src="${dog.img}" alt="Perro" />
       <p class="name-text">${dog.name}</p>
-      <p name="${dog.name}"></p>
-      <button class="precioso">Precioso</button> <button class="feo">Feo</button>
+      <p name="${dog.name}">${dog.likes}❤️ ${dog.dislikes}🤮</p>
+      <button class="precioso ${dog.isLiked ? 'precioso-selected' : ''}">Precioso</button> <button class="feo ${dog.isDisliked ? 'feo-selected' : ''}">Feo</button>
     </div>` : '';
 
     console.log('innerHtml posición', index, dogList.innerHTML);
@@ -36,17 +37,18 @@ function renderPerricosNameButtons() {
   nameButtonsDiv.innerHTML = '';
   Object.keys(nameCounts).forEach(name => {
     const count = nameCounts[name];
-    nameButtonsDiv.innerHTML += `<button class="filter-button ${selected === name ? 'selected' : ''}" data-name="${name}">${name} (${count})</button>`
+    nameButtonsDiv.innerHTML += `<button class="filter-button ${selectedDogs.includes(name.toLowerCase()) ? 'filter-button-selected' : ''}" filter-name="${name}">${name} (${count})</button>`
   });
 }
 
 const addPerrico = async () => {
   const perricoImg = await getRandomDogImage();
   const perricoName = getRandomPerricoName();
+  const numbers = getRandomLikesAndDislikes();
   // perricosArray.push(perricoImg);
 
   //Añadir perrito (objeto)
-  perricosArray.push({ img: perricoImg, name: perricoName });
+  perricosArray.push({ id: idDogCounter++, img: perricoImg, name: perricoName, likes: numbers.likes, isLiked: false, dislikes: numbers.dislikes, isDisliked: false});
   renderPerricoArray();
 };
 
@@ -58,30 +60,45 @@ const add5Perricos = async () => {
 };
 
 //Añadir like a la votación
-function addLike(element) 
+function addLike(id, button, text) 
 {
-  if(element.textContent.trim() === "❤️")
+  console.log(perricosArray)
+  const dog = perricosArray.find(p => p.id === id);
+  console.log(dog)
+  if(!button.classList.contains('precioso-selected'))
   {
-    element.textContent = "" ;
+    dog.likes++;
+    button.classList.add('precioso-selected');
+    
   }
   else
   {
-    element.textContent = "❤️" ;
+    dog.likes--;
+    button.classList.remove('precioso-selected');
   }
-  
+  dog.isLiked = !dog.isLiked;
+  text.textContent = `${dog.likes}❤️ ${dog.dislikes}🤮`;
 }
 
 //Añadir dislike a la votación
-function addDislike(element) 
+function addDislike(id, button, text) 
 {
-  if(element.textContent.trim() === "🤮")
+  const dog = perricosArray.find(p => p.id === id)
+
+  if(!button.classList.contains('feo-selected'))
   {
-    element.textContent = "" ;
+    dog.dislikes++;
+    button.classList.add('feo-selected');
+    
   }
   else
   {
-    element.textContent = "🤮" ;
+    dog.dislikes--;
+    button.classList.remove("feo-selected");
+
   }
+  dog.isDisliked = !dog.isDisliked;
+  text.textContent = `${dog.likes}❤️ ${dog.dislikes}🤮`;
 }
 
 //Obtener nombre aleatorio de perrico
@@ -90,17 +107,27 @@ function getRandomPerricoName() {
   return perricosNames[randomIndex];
 }
 
+function getRandomLikesAndDislikes() {
+  const randomNumber = () => Math.floor(Math.random() * 1001);
+
+  const numbers = {likes: randomNumber(), dislikes: randomNumber()};
+  return numbers;
+}
+
 //Mostrar solo perros que tengan un nombre concreto
-function selectDogs(name) {
-  if(selected !== null && selected === name)
+function selectDogs(name) 
+{
+  if(selectedDogs.includes(name.toLowerCase()))
   {
-    selected = null;
+    const index = selectedDogs.indexOf(name.toLowerCase());
+    selectedDogs.splice(index, 1);
   }
+
   else
   {
-    selected = name;
+    selectedDogs.push(name.toLowerCase());
   }
-  
+
   renderPerricoArray();
 }
 
@@ -110,22 +137,38 @@ function addListeners()
   document.querySelectorAll('.precioso').forEach(btn => {
     btn.addEventListener('click', function () {
       const card = btn.parentElement;
-      const element = card.querySelector('p[name]');
-      addLike(element);
+      const id = Number(card.getAttribute("id"));
+      console.log(id)
+      const text = card.querySelector('p[name]');
+      addLike(id, btn, text);
+
+      const disLikeBtn = card.querySelector('.feo');
+      if(disLikeBtn.classList.contains('feo-selected'))
+      {
+        addDislike(id, disLikeBtn, text);
+      }
     });
   });
 
   document.querySelectorAll('.feo').forEach(btn => {
     btn.addEventListener('click', function () {
       const card = btn.parentElement;
-      const element = card.querySelector('p[name]');
-      addDislike(element);
+      const id = Number(card.getAttribute("id"));
+      const text = card.querySelector('p[name]');
+      addDislike(id, btn, text);
+
+      const likeBtn = card.querySelector('.precioso');
+      if(likeBtn.classList.contains('precioso-selected'))
+      {
+        addLike(id, likeBtn, text);
+      }
     });
   });
 
   document.querySelectorAll('.filter-button').forEach(btn => {
     btn.addEventListener('click', function () {
-      selectDogs(btn.dataset.name);
+      const name = btn.getAttribute('filter-name');
+      selectDogs(name);
     });
   });
 }
