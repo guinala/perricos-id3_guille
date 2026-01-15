@@ -1,4 +1,6 @@
 const perricosArray = [];
+let breedsObject;
+let chosenBreed = '';
 const perricosNames = ['Firulais', 'Luna', 'Thor', 'Pastelito de Fresa', 'Rocky', 'Duke', 'Buddy', 'Loki', 'Nara'];
 let selectedDogs = [];
 let idDogCounter = 0;
@@ -23,6 +25,7 @@ function renderPerricoArray() {
 
   renderPerricosNameButtons();
   addListeners();
+  renderBreeds();
 }
 
 function renderPerricosNameButtons() {
@@ -42,7 +45,15 @@ function renderPerricosNameButtons() {
 }
 
 const addPerrico = async () => {
-  const perricoImg = await getRandomDogImage();
+  let perricoImg;
+  if(chosenBreed)
+  {
+    perricoImg = await getBreedDogImage(chosenBreed);
+  }
+  else
+  {
+    perricoImg = await getRandomDogImage();
+  }
   const perricoName = getRandomPerricoName();
   const numbers = getRandomLikesAndDislikes();
   // perricosArray.push(perricoImg);
@@ -187,13 +198,34 @@ document.querySelector('#add-5-perricos').addEventListener('click', async functi
   disableEnableButtons(event.target, document.querySelector('#add-1-perrico'));
 });
 
+document.querySelector('#breed-list').addEventListener('change', function (event) 
+{
+  chosenBreed = event.target.value;
+  renderPerricoArray(); 
+});
+
 function disableEnableButtons(button1, button2)
 {
   button1.disabled = !button1.disabled;
   button2.disabled = !button2.disabled;
 }
 
-getAllBreeds();
+async function renderBreeds()
+{
+  breedsObject = await getAllBreeds();
+  const selectButton = document.querySelector("#breed-list");
+  const breedsNames = Object.keys(breedsObject);
+
+  for(let index = 0; index < breedsNames.length; index++)
+  {
+    const option = document.createElement("option");
+    selectButton.appendChild(option);
+    option.value = breedsNames[index];
+    option.textContent = breedsNames[index].toUpperCase();
+  }
+}
+
+renderBreeds();
 
 
 
