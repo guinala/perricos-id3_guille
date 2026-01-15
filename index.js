@@ -64,9 +64,9 @@ const addPerrico = async () => {
 };
 
 //Añadir 5 perricos
-const add5Perricos = async () => {
-  await Promise.all(addPerrico(), addPerrico(), addPerrico(), addPerrico(), addPerrico());
-};
+async function add5Perrico() {
+  await Promise.all([addPerrico(), addPerrico(), addPerrico(), addPerrico(), addPerrico()]);
+}
 
 //Añadir like a la votación
 function addLike(id, button, text) 
@@ -194,7 +194,7 @@ document.querySelector('#add-1-perrico').addEventListener('click', async functio
 document.querySelector('#add-5-perricos').addEventListener('click', async function (event) 
 {
   disableEnableButtons(event.target, document.querySelector('#add-1-perrico'));
-  await add5Perricos();
+  await add5Perrico();
   disableEnableButtons(event.target, document.querySelector('#add-1-perrico'));
 });
 
