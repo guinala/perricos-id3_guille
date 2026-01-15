@@ -13,3 +13,25 @@ async function getRandomDogImage() {
     console.error(error.message);
   }
 }
+
+async function getAllBreeds()
+{
+  const url = 'https://dog.ceo/api/breeds/list/all';
+
+  try 
+  {
+    const response = await fetch(url);
+    if (!response.ok) 
+    {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const json = await response.json();
+    console.log(json);
+    return json.message;
+  } 
+  catch (error) 
+  {
+    console.error(error.message);
+  }
+}

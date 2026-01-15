@@ -120,3 +120,9 @@ img {
   margin-left: auto;
   margin-right: auto;
 }
+
+
+#add-1-perrico[disabled], #add-5-perricos[disabled]
+{
+  background-color: gray;
+}

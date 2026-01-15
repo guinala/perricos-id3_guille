@@ -54,9 +54,7 @@ const addPerrico = async () => {
 
 //Añadir 5 perricos
 const add5Perricos = async () => {
-  for (let i = 0; i < 5; i++) {
-    await addPerrico();
-  }
+  await Promise.all(addPerrico(), addPerrico(), addPerrico(), addPerrico(), addPerrico());
 };
 
 //Añadir like a la votación
@@ -175,14 +173,27 @@ function addListeners()
 
 renderPerricoArray();
 
-document.querySelector('#add-1-perrico').addEventListener('click', function () {
-  addPerrico();
+document.querySelector('#add-1-perrico').addEventListener('click', async function (event) 
+{
+  disableEnableButtons(event.target, document.querySelector('#add-5-perricos'));
+  await addPerrico();
+  disableEnableButtons(event.target, document.querySelector('#add-5-perricos'));
 });
 
-document.querySelector('#add-5-perricos').addEventListener('click', function () {
-  add5Perricos();
+document.querySelector('#add-5-perricos').addEventListener('click', async function (event) 
+{
+  disableEnableButtons(event.target, document.querySelector('#add-1-perrico'));
+  await add5Perricos();
+  disableEnableButtons(event.target, document.querySelector('#add-1-perrico'));
 });
 
+function disableEnableButtons(button1, button2)
+{
+  button1.disabled = !button1.disabled;
+  button2.disabled = !button2.disabled;
+}
+
+getAllBreeds();
 
 
 
