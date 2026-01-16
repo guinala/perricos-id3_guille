@@ -24,7 +24,7 @@ button:hover, button:active {
   cursor: pointer;
 }
 
-#name-buttons {
+#name-buttons, #breeds-buttons {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -60,17 +60,37 @@ button:hover, button:active {
   transition: background-color 0.2s ease-in;
 }
 
-#add-1-perrico:hover, #add-1-perrico:active, #add-5-perricos:hover, #add-5-perricos:active, .filter-button:hover, .filter-button:active {
+#add-1-perrico:hover, #add-1-perrico:active, #add-5-perricos:hover, #add-5-perricos:active, .filter-name-button:hover, .filter-name-button:active {
   background-color: #fcefa4;
   transition: background-color 0.2s ease-in;
 }
 
-.filter-button-selected {
+.filter-breed-button
+{
+  background-color: white;
+}
+
+.filter-breed-button:hover, .filter-breed-button:active {
+  background-color: #c7c7c7;
+  transition: background-color 0.2s ease-in;
+}
+
+.filter-breed-button-selected {
+  border: 4px solid #000000;
+  background-color: #b3b3b3;
+}
+
+.filter-breed-button-selected:hover {
+  border: 3px solid #000000;
+  background-color: #c5c5c5;
+}
+
+.filter-name-button-selected {
   border: 4px solid #000000;
   background-color: #fcefa4;
 }
 
-.filter-button-selected:hover {
+.filter-name-button-selected:hover {
   border: 3px solid #000000;
   background-color: #fdf4be;
 }

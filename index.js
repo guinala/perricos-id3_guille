@@ -2,7 +2,8 @@ const perricosArray = [];
 let breedsObject;
 let chosenBreed = '';
 const perricosNames = ['Firulais', 'Luna', 'Thor', 'Pastelito de Fresa', 'Rocky', 'Duke', 'Buddy', 'Loki', 'Nara'];
-let selectedDogs = [];
+let selectedDogsName = [];
+let selectedDogsBreeds = [];
 let idDogCounter = 0;
 // addPerrico();
 
@@ -11,10 +12,10 @@ function renderPerricoArray() {
   dogList.innerHTML = '';
 
   perricosArray.forEach((dog, index) => {
-    const htmlAdd = (selectedDogs.length === 0 || selectedDogs.includes(dog.name.toLowerCase()))  ? `<div class="card" id="${dog.id}">
+    const htmlAdd = ((selectedDogsName.length === 0 || selectedDogsName.includes(dog.name.toLowerCase())) && (selectedDogsBreeds.length === 0 || selectedDogsBreeds.includes(dog.breedName.toLowerCase())))  ? `<div class="card" id="${dog.id}">
       <img src="${dog.img}" alt="Perro" />
       <p class="name-text">${dog.name}</p>
-      <p name="${dog.name}">${dog.likes}❤️ ${dog.dislikes}🤮</p>
+      <p name="${dog.name}" breed="${dog.breedName}">${dog.likes}❤️ ${dog.dislikes}🤮</p>
       <button class="precioso ${dog.isLiked ? 'precioso-selected' : ''}">Precioso</button> <button class="feo ${dog.isDisliked ? 'feo-selected' : ''}">Feo</button>
     </div>` : '';
 
@@ -24,6 +25,7 @@ function renderPerricoArray() {
   });
 
   renderPerricosNameButtons();
+  renderPerricosBreedButtons();
   addListeners();
   renderBreeds();
 }
@@ -40,7 +42,23 @@ function renderPerricosNameButtons() {
   nameButtonsDiv.innerHTML = '';
   Object.keys(nameCounts).forEach(name => {
     const count = nameCounts[name];
-    nameButtonsDiv.innerHTML += `<button class="filter-button ${selectedDogs.includes(name.toLowerCase()) ? 'filter-button-selected' : ''}" filter-name="${name}">${name} (${count})</button>`
+    nameButtonsDiv.innerHTML += `<button class="filter-name-button ${selectedDogsName.includes(name.toLowerCase()) ? 'filter-name-button-selected' : ''}" filter-name="${name}">${name} (${count})</button>`
+  });
+}
+
+function renderPerricosBreedButtons() {
+  const breedCounts = {};
+
+  perricosArray.forEach(dog => {
+    breedCounts[dog.breedName] = breedCounts[dog.breedName] === undefined ? 1 : breedCounts[dog.breedName] + 1;
+  });
+
+  const breedButtonsDiv = document.querySelector('#breeds-buttons');
+
+  breedButtonsDiv.innerHTML = '';
+  Object.keys(breedCounts).forEach(breedName => {
+    const count = breedCounts[breedName];
+    breedButtonsDiv.innerHTML += `<button class="filter-breed-button ${selectedDogsBreeds.includes(breedName.toLowerCase()) ? 'filter-breed-button-selected' : ''}" filter-name-breed="${breedName}">${breedName} (${count})</button>`
   });
 }
 
@@ -56,10 +74,10 @@ const addPerrico = async () => {
   }
   const perricoName = getRandomPerricoName();
   const numbers = getRandomLikesAndDislikes();
-  // perricosArray.push(perricoImg);
+  const breed = perricoImg.split("/")[4];
 
   //Añadir perrito (objeto)
-  perricosArray.push({ id: idDogCounter++, img: perricoImg, name: perricoName, likes: numbers.likes, isLiked: false, dislikes: numbers.dislikes, isDisliked: false});
+  perricosArray.push({ id: idDogCounter++, img: perricoImg, name: perricoName, likes: numbers.likes, isLiked: false, dislikes: numbers.dislikes, isDisliked: false, breedName: breed});
   renderPerricoArray();
 };
 
@@ -124,18 +142,35 @@ function getRandomLikesAndDislikes() {
 }
 
 //Mostrar solo perros que tengan un nombre concreto
-function selectDogs(name) 
+function selectDogsName(name) 
 {
-  if(selectedDogs.includes(name.toLowerCase()))
+  if(selectedDogsName.includes(name.toLowerCase()))
   {
-    const index = selectedDogs.indexOf(name.toLowerCase());
-    selectedDogs.splice(index, 1);
+    const index = selectedDogsName.indexOf(name.toLowerCase());
+    selectedDogsName.splice(index, 1);
   }
 
   else
   {
-    selectedDogs.push(name.toLowerCase());
+    selectedDogsName.push(name.toLowerCase());
   }
+
+  renderPerricoArray();
+}
+
+function selectDogsBreed(nameBreed) 
+{
+  if(selectedDogsBreeds.includes(nameBreed.toLowerCase()))
+  {
+    const index = selectedDogsBreeds.indexOf(nameBreed.toLowerCase());
+    selectedDogsBreeds.splice(index, 1);
+  }
+
+  else
+  {
+    selectedDogsBreeds.push(nameBreed.toLowerCase());
+  }
+
 
   renderPerricoArray();
 }
@@ -174,10 +209,17 @@ function addListeners()
     });
   });
 
-  document.querySelectorAll('.filter-button').forEach(btn => {
+  document.querySelectorAll('.filter-name-button').forEach(btn => {
     btn.addEventListener('click', function () {
       const name = btn.getAttribute('filter-name');
-      selectDogs(name);
+      selectDogsName(name);
+    });
+  });
+
+  document.querySelectorAll('.filter-breed-button').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const nameBreed = btn.getAttribute('filter-name-breed');
+      selectDogsBreed(nameBreed);
     });
   });
 }
@@ -202,6 +244,18 @@ document.querySelector('#breed-list').addEventListener('change', function (event
 {
   chosenBreed = event.target.value;
   renderPerricoArray(); 
+});
+
+document.querySelector('#show-names').addEventListener('change', function (event) 
+{
+  const div = document.querySelector("#name-buttons")
+  div.style.display = event.target.checked ? 'none' : 'flex'
+});
+
+document.querySelector('#show-breeds').addEventListener('change', function (event) 
+{
+  const div = document.querySelector("#breeds-buttons")
+  div.style.display = event.target.checked ? 'none' : 'flex'
 });
 
 function disableEnableButtons(button1, button2)
