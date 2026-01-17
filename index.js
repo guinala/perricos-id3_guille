@@ -5,6 +5,7 @@ const perricosNames = ['Firulais', 'Luna', 'Thor', 'Pastelito de Fresa', 'Rocky'
 let selectedDogsName = [];
 let selectedDogsBreeds = [];
 let idDogCounter = 0;
+let searchedContent = '';
 // addPerrico();
 
 function renderPerricoArray() {
@@ -12,7 +13,7 @@ function renderPerricoArray() {
   dogList.innerHTML = '';
 
   perricosArray.forEach((dog, index) => {
-    const htmlAdd = ((selectedDogsName.length === 0 || selectedDogsName.includes(dog.name.toLowerCase())) && (selectedDogsBreeds.length === 0 || selectedDogsBreeds.includes(dog.breedName.toLowerCase())))  ? `<div class="card" id="${dog.id}">
+    const htmlAdd = ((searchedContent === '' || dog.name.startsWith(searchedContent)) && (selectedDogsName.length === 0 || selectedDogsName.includes(dog.name.toLowerCase())) && (selectedDogsBreeds.length === 0 || selectedDogsBreeds.includes(dog.breedName.toLowerCase())))  ? `<div class="card" id="${dog.id}">
       <img src="${dog.img}" alt="Perro" />
       <p class="name-text">${dog.name}</p>
       <p name="${dog.name}" breed="${dog.breedName}">${dog.likes}❤️ ${dog.dislikes}🤮</p>
@@ -256,6 +257,13 @@ document.querySelector('#show-breeds').addEventListener('change', function (even
 {
   const div = document.querySelector("#breeds-buttons")
   div.style.display = event.target.checked ? 'none' : 'flex'
+});
+
+document.querySelector('#searcher').addEventListener('input', function (event) 
+{
+  searchedContent = event.target.value;
+  console.log(searchedContent)
+  renderPerricoArray();
 });
 
 function disableEnableButtons(button1, button2)
