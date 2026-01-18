@@ -5,18 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="./api.js"></script>
     <title>Votalperrico</title>
-    <link rel="stylesheet" href="./index.css" />
+    <link rel="stylesheet" href="./index.css"/>
   </head>
   <body>
     <h1>Votalperrico</h1>
     <h3>¡Elige a tus favoritos!</h3>
+    <span>Método de filtrado por nombre</span>
+    <select id="filter-option">
+      <option value="filter-by-button">Botones</option>
+      <option value="filter-by-search">Buscador</option>
+    </select>
     <input id="searcher" type="text" placeholder="Escribe un nombre...">
     <select id="breed-list" name="breed">
       <option value="">Cualquiera</option>
     </select>
     <button id="add-1-perrico">Añadir 1 perrico más</button> <button id="add-5-perricos">Añadir 5 perricos más</button>
-    <input type="checkbox" id="show-names"> Ocultar nombres de perro
-    <input type="checkbox" id="show-breeds"> Ocultar nombres de raza
+    <div id="checkboxes">
+        <input type="checkbox" class="show-names-content" id="show-names">
+        <label class="show-names-content">Ocultar nombres de perro</label>
+        <input type="checkbox" class="show-breeds-content" id="show-breeds">
+        <label class="show-breeds-content">Ocultar nombres de raza</label>
+    </div>
     <div id="name-buttons"></div>
     <div id="breeds-buttons"></div>
     <div id="dog-list"></div>

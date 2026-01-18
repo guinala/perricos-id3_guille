@@ -266,6 +266,30 @@ document.querySelector('#searcher').addEventListener('input', function (event)
   renderPerricoArray();
 });
 
+document.querySelector('#filter-option').addEventListener('change', function (event) 
+{
+   const searcher = document.querySelector("#searcher");
+   const nameButtons = document.querySelector("#name-buttons");
+   const checkboxNames = document.querySelectorAll('.show-names-content');
+   
+   if(event.target.value === 'filter-by-button')
+   {
+      searcher.style.display = 'none';
+      nameButtons.style.display = 'flex';
+      checkboxNames.forEach(element => {
+        element.style.display = 'inline-block';
+      });
+   }
+   else
+   {
+      searcher.style.display = 'inline-block';
+      nameButtons.style.display = 'none';
+      checkboxNames.forEach(element => {
+        element.style.display = 'none';
+      });
+   }
+});
+
 function disableEnableButtons(button1, button2)
 {
   button1.disabled = !button1.disabled;
