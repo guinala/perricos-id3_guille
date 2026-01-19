@@ -282,6 +282,7 @@ document.querySelector('#filter-option-name').addEventListener('change', functio
    {
       searcher.style.display = 'none';
       searcher.value = '';
+      searchedContentName = '';
       nameButtons.style.display = 'flex';
       checkboxNames.forEach(element => {
         element.style.display = 'inline-block';
@@ -291,10 +292,12 @@ document.querySelector('#filter-option-name').addEventListener('change', functio
    {
       searcher.style.display = 'inline-block';
       nameButtons.style.display = 'none';
+      selectedDogsName = [];
       checkboxNames.forEach(element => {
         element.style.display = 'none';
       });
    }
+   renderPerricoArray();
 });
 
 document.querySelector('#filter-option-breed').addEventListener('change', function (event) 
@@ -307,6 +310,7 @@ document.querySelector('#filter-option-breed').addEventListener('change', functi
    {
       searcher.style.display = 'none';
       searcher.value = '';
+      searchedContentBreed = '';
       nameButtons.style.display = 'flex';
       checkboxNames.forEach(element => {
         element.style.display = 'inline-block';
@@ -316,10 +320,12 @@ document.querySelector('#filter-option-breed').addEventListener('change', functi
    {
       searcher.style.display = 'inline-block';
       nameButtons.style.display = 'none';
+      selectedDogsBreeds = [];
       checkboxNames.forEach(element => {
         element.style.display = 'none';
       });
    }
+   renderPerricoArray();
 });
 
 function disableEnableButtons(button1, button2)
