@@ -5,7 +5,8 @@ const perricosNames = ['Firulais', 'Luna', 'Thor', 'Pastelito de Fresa', 'Rocky'
 let selectedDogsName = [];
 let selectedDogsBreeds = [];
 let idDogCounter = 0;
-let searchedContent = '';
+let searchedContentName = '';
+let searchedContentBreed = '';
 // addPerrico();
 
 function renderPerricoArray() {
@@ -13,7 +14,7 @@ function renderPerricoArray() {
   dogList.innerHTML = '';
 
   perricosArray.forEach((dog, index) => {
-    const htmlAdd = ((searchedContent === '' || dog.name.startsWith(searchedContent)) && (selectedDogsName.length === 0 || selectedDogsName.includes(dog.name.toLowerCase())) && (selectedDogsBreeds.length === 0 || selectedDogsBreeds.includes(dog.breedName.toLowerCase())))  ? `<div class="card" id="${dog.id}">
+    const htmlAdd = ((searchedContentBreed === '' || dog.breedName.toLowerCase().startsWith(searchedContentBreed.toLowerCase())) && (searchedContentName === '' || dog.name.toLowerCase().startsWith(searchedContentName.toLowerCase())) && (selectedDogsName.length === 0 || selectedDogsName.includes(dog.name.toLowerCase())) && (selectedDogsBreeds.length === 0 || selectedDogsBreeds.includes(dog.breedName.toLowerCase())))  ? `<div class="card" id="${dog.id}">
       <img src="${dog.img}" alt="Perro" />
       <p class="name-text">${dog.name}</p>
       <p name="${dog.name}" breed="${dog.breedName}">${dog.likes}❤️ ${dog.dislikes}🤮</p>
@@ -259,22 +260,53 @@ document.querySelector('#show-breeds').addEventListener('change', function (even
   div.style.display = event.target.checked ? 'none' : 'flex'
 });
 
-document.querySelector('#searcher').addEventListener('input', function (event) 
+document.querySelector('#searcher-name').addEventListener('input', function (event) 
 {
-  searchedContent = event.target.value;
-  console.log(searchedContent)
+  searchedContentName = event.target.value;
   renderPerricoArray();
 });
 
-document.querySelector('#filter-option').addEventListener('change', function (event) 
+document.querySelector('#searcher-breed').addEventListener('input', function (event) 
 {
-   const searcher = document.querySelector("#searcher");
+  searchedContentBreed = event.target.value;
+  renderPerricoArray();
+});
+
+document.querySelector('#filter-option-name').addEventListener('change', function (event) 
+{
+   const searcher = document.querySelector("#searcher-name");
    const nameButtons = document.querySelector("#name-buttons");
    const checkboxNames = document.querySelectorAll('.show-names-content');
    
-   if(event.target.value === 'filter-by-button')
+   if(event.target.value === 'filter-name-by-button')
    {
       searcher.style.display = 'none';
+      searcher.value = '';
+      nameButtons.style.display = 'flex';
+      checkboxNames.forEach(element => {
+        element.style.display = 'inline-block';
+      });
+   }
+   else
+   {
+      searcher.style.display = 'inline-block';
+      nameButtons.style.display = 'none';
+      checkboxNames.forEach(element => {
+        element.style.display = 'none';
+      });
+   }
+});
+
+document.querySelector('#filter-option-breed').addEventListener('change', function (event) 
+{
+   const searcher = document.querySelector("#searcher-breed");
+   const nameButtons = document.querySelector("#breeds-buttons");
+   const checkboxNames = document.querySelectorAll('.show-breeds-content');
+   
+   if(event.target.value === 'filter-breed-by-button')
+   {
+      searcher.style.display = 'none';
+      searcher.value = '';
       nameButtons.style.display = 'flex';
       checkboxNames.forEach(element => {
         element.style.display = 'inline-block';

@@ -12,7 +12,7 @@ h1
   margin-bottom: 20px;
 }
 
-button, #breed-list, #searcher, #filter-option, #checkboxes
+button, #breed-list, #searcher-name, #searcher-breed, #filter-option-name, #filter-option-breed
 {
   margin: 5px;
   padding: 10px 15px;
@@ -30,7 +30,7 @@ button, #breed-list, #searcher, #filter-option, #checkboxes
   width: fit-content;
 }
 
-#searcher
+#searcher-name, #searcher-breed
 {
   display: none;
 }
