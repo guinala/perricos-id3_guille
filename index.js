@@ -1,4 +1,4 @@
-const perricosArray = [];
+let perricosArray = [];
 let breedsObject;
 let chosenBreed = '';
 const perricosNames = ['Firulais', 'Luna', 'Thor', 'Pastelito de Fresa', 'Rocky', 'Duke', 'Buddy', 'Loki', 'Nara'];
@@ -80,6 +80,7 @@ const addPerrico = async () => {
 
   //Añadir perrito (objeto)
   perricosArray.push({ id: idDogCounter++, img: perricoImg, name: perricoName, likes: numbers.likes, isLiked: false, dislikes: numbers.dislikes, isDisliked: false, breedName: breed});
+  localStorage.setItem('perricosArray', JSON.stringify(perricosArray));
   renderPerricoArray();
 };
 
@@ -107,6 +108,7 @@ function addLike(id, button, text)
   }
   dog.isLiked = !dog.isLiked;
   text.textContent = `${dog.likes}❤️ ${dog.dislikes}🤮`;
+  localStorage.setItem('perricosArray', JSON.stringify(perricosArray));
 }
 
 //Añadir dislike a la votación
@@ -128,6 +130,7 @@ function addDislike(id, button, text)
   }
   dog.isDisliked = !dog.isDisliked;
   text.textContent = `${dog.likes}❤️ ${dog.dislikes}🤮`;
+  localStorage.setItem('perricosArray', JSON.stringify(perricosArray));
 }
 
 //Obtener nombre aleatorio de perrico
@@ -226,6 +229,18 @@ function addListeners()
   });
 }
 
+function loadData()
+{
+  const savedPerricos = localStorage.getItem('perricosArray');
+  if (savedPerricos) {
+    perricosArray = JSON.parse(savedPerricos);
+    if (perricosArray.length > 0) {
+      idDogCounter = Math.max(...perricosArray.map(dog => dog.id)) + 1;
+    }
+  }
+}
+
+loadData();
 renderPerricoArray();
 
 document.querySelector('#add-1-perrico').addEventListener('click', async function (event) 
@@ -238,6 +253,7 @@ document.querySelector('#add-1-perrico').addEventListener('click', async functio
 document.querySelector('#clear-perricos').addEventListener('click', async function (event) 
 {
   perricosArray.length = 0;
+  localStorage.setItem('perricosArray', JSON.stringify(perricosArray));
   renderPerricoArray();
 });
 
