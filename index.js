@@ -239,18 +239,6 @@ document.querySelector('#breed-list').addEventListener('change', function (event
   renderPerricoArray(); 
 });
 
-document.querySelector('#show-names').addEventListener('change', function (event) 
-{
-  const div = document.querySelector("#name-buttons")
-  div.style.display = event.target.checked ? 'none' : 'flex'
-});
-
-document.querySelector('#show-breeds').addEventListener('change', function (event) 
-{
-  const div = document.querySelector("#breeds-buttons")
-  div.style.display = event.target.checked ? 'none' : 'flex'
-});
-
 document.querySelector('#searcher-name').addEventListener('input', function (event) 
 {
   searchedContentName = event.target.value;
@@ -261,62 +249,6 @@ document.querySelector('#searcher-breed').addEventListener('input', function (ev
 {
   searchedContentBreed = event.target.value;
   renderPerricoArray();
-});
-
-document.querySelector('#filter-option-name').addEventListener('change', function (event) 
-{
-   const searcher = document.querySelector("#searcher-name");
-   const nameButtons = document.querySelector("#name-buttons");
-   const checkboxNames = document.querySelectorAll('.show-names-content');
-   
-   if(event.target.value === 'filter-name-by-button')
-   {
-      searcher.style.display = 'none';
-      searcher.value = '';
-      searchedContentName = '';
-      nameButtons.style.display = 'flex';
-      checkboxNames.forEach(element => {
-        element.style.display = 'inline-block';
-      });
-   }
-   else
-   {
-      searcher.style.display = 'inline-block';
-      nameButtons.style.display = 'none';
-      selectedDogsName = [];
-      checkboxNames.forEach(element => {
-        element.style.display = 'none';
-      });
-   }
-   renderPerricoArray();
-});
-
-document.querySelector('#filter-option-breed').addEventListener('change', function (event) 
-{
-   const searcher = document.querySelector("#searcher-breed");
-   const nameButtons = document.querySelector("#breeds-buttons");
-   const checkboxNames = document.querySelectorAll('.show-breeds-content');
-   
-   if(event.target.value === 'filter-breed-by-button')
-   {
-      searcher.style.display = 'none';
-      searcher.value = '';
-      searchedContentBreed = '';
-      nameButtons.style.display = 'flex';
-      checkboxNames.forEach(element => {
-        element.style.display = 'inline-block';
-      });
-   }
-   else
-   {
-      searcher.style.display = 'inline-block';
-      nameButtons.style.display = 'none';
-      selectedDogsBreeds = [];
-      checkboxNames.forEach(element => {
-        element.style.display = 'none';
-      });
-   }
-   renderPerricoArray();
 });
 
 function disableEnableButtons(button1, button2)
