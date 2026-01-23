@@ -12,7 +12,7 @@ h1
   margin-bottom: 20px;
 }
 
-button, #breed-list, #searcher-name, #searcher-breed, #filter-option-name, #filter-option-breed
+button, #clear-perricos, #breed-list, #searcher-name, #searcher-breed, #filter-option-name, #filter-option-breed
 {
   margin: 5px;
   padding: 10px 15px;
@@ -82,7 +82,7 @@ button:hover, button:active
   transition: background-color 0.2s ease-in;
 }
 
-#add-1-perrico:hover, #add-1-perrico:active, #add-5-perricos:hover, #add-5-perricos:active, .filter-name-button:hover, .filter-name-button:active 
+#add-1-perrico:hover, #add-1-perrico:active, #add-5-perricos:hover, #add-5-perricos:active, #clear-perricos:hover, #clear-perricos:active, .filter-name-button:hover, .filter-name-button:active 
 {
   background-color: #fcefa4;
   transition: background-color 0.2s ease-in;

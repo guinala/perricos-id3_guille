@@ -235,6 +235,12 @@ document.querySelector('#add-1-perrico').addEventListener('click', async functio
   disableEnableButtons(event.target, document.querySelector('#add-5-perricos'));
 });
 
+document.querySelector('#clear-perricos').addEventListener('click', async function (event) 
+{
+  perricosArray.length = 0;
+  renderPerricoArray();
+});
+
 document.querySelector('#add-5-perricos').addEventListener('click', async function (event) 
 {
   disableEnableButtons(event.target, document.querySelector('#add-1-perrico'));
