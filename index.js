@@ -1,3 +1,6 @@
+import { getAllBreeds, getRandomDogImage, getBreedDogImage } from "./api";
+import * as dateFns from 'date-fns';
+
 let perricosArray = [];
 let breedsObject;
 let chosenBreed = '';
@@ -26,42 +29,8 @@ function renderPerricoArray() {
     dogList.innerHTML += htmlAdd;
   });
 
-  renderPerricosNameButtons();
-  renderPerricosBreedButtons();
   addListeners();
   renderBreeds();
-}
-
-function renderPerricosNameButtons() {
-  const nameCounts = {};
-
-  perricosArray.forEach(dog => {
-    nameCounts[dog.name] = nameCounts[dog.name] === undefined ? 1 : nameCounts[dog.name] + 1;
-  });
-
-  const nameButtonsDiv = document.querySelector('#name-buttons');
-
-  nameButtonsDiv.innerHTML = '';
-  Object.keys(nameCounts).forEach(name => {
-    const count = nameCounts[name];
-    nameButtonsDiv.innerHTML += `<button class="filter-name-button ${selectedDogsName.includes(name.toLowerCase()) ? 'filter-name-button-selected' : ''}" filter-name="${name}">${name} (${count})</button>`
-  });
-}
-
-function renderPerricosBreedButtons() {
-  const breedCounts = {};
-
-  perricosArray.forEach(dog => {
-    breedCounts[dog.breedName] = breedCounts[dog.breedName] === undefined ? 1 : breedCounts[dog.breedName] + 1;
-  });
-
-  const breedButtonsDiv = document.querySelector('#breeds-buttons');
-
-  breedButtonsDiv.innerHTML = '';
-  Object.keys(breedCounts).forEach(breedName => {
-    const count = breedCounts[breedName];
-    breedButtonsDiv.innerHTML += `<button class="filter-breed-button ${selectedDogsBreeds.includes(breedName.toLowerCase()) ? 'filter-breed-button-selected' : ''}" filter-name-breed="${breedName}">${breedName} (${count})</button>`
-  });
 }
 
 const addPerrico = async () => {
