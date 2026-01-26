@@ -15,8 +15,7 @@ function loadFavorites() {
     {
         swiperContainer.innerHTML = `
         <div class="empty-message">
-            <p>😢 Todavía no tienes favoritos</p>
-            <p style="font-size: 18px; margin-top: 10px;">¡Ve a la lista principal y marca algunos perricos con la estrella!</p>
+            <p>¡Todavía no tienes favoritos!</p>
         </div>
         `;
         return;
@@ -65,9 +64,3 @@ function loadFavorites() {
     }
 
     loadFavorites();
-
-    window.addEventListener('storage', function(e) {
-        if (e.key === 'perricosArray') {
-            loadFavorites();
-        }
-    });
