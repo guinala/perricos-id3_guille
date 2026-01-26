@@ -19,7 +19,10 @@ function renderPerricoArray() {
   perricosArray.forEach((dog, index) => {
     const htmlAdd = ((searchedContentBreed === '' || dog.breedName.toLowerCase().startsWith(searchedContentBreed.toLowerCase())) && (searchedContentName === '' || dog.name.toLowerCase().startsWith(searchedContentName.toLowerCase())) && (selectedDogsName.length === 0 || selectedDogsName.includes(dog.name.toLowerCase())) && (selectedDogsBreeds.length === 0 || selectedDogsBreeds.includes(dog.breedName.toLowerCase())))  ? `<div class="card" id="${dog.id}">
       <img src="${dog.img}" alt="Perro" />
-      <p class="name-text">${dog.name}</p>
+      <p class="name-text">
+        ${dog.name} 
+        <span class="favorite-star" style="cursor: pointer; font-size: 24px;">${dog.isFavorite ? '⭐' : '☆'}</span>
+      </p>
       <p name="${dog.name}" breed="${dog.breedName}">${dog.likes}❤️ ${dog.dislikes}🤮</p>
       <button class="precioso ${dog.isLiked ? 'precioso-selected' : ''}">Precioso</button> <button class="feo ${dog.isDisliked ? 'feo-selected' : ''}">Feo</button>
     </div>` : '';
@@ -48,7 +51,8 @@ const addPerrico = async () => {
   const breed = perricoImg.split("/")[4];
 
   //Añadir perrito (objeto)
-  perricosArray.push({ id: idDogCounter++, img: perricoImg, name: perricoName, likes: numbers.likes, isLiked: false, dislikes: numbers.dislikes, isDisliked: false, breedName: breed});
+  perricosArray.push({ id: idDogCounter++, img: perricoImg, name: perricoName, 
+    likes: numbers.likes, isLiked: false, dislikes: numbers.dislikes, isDisliked: false, breedName: breed, isFavorite: false});
   localStorage.setItem('perricosArray', JSON.stringify(perricosArray));
   renderPerricoArray();
 };
@@ -100,6 +104,14 @@ function addDislike(id, button, text)
   dog.isDisliked = !dog.isDisliked;
   text.textContent = `${dog.likes}❤️ ${dog.dislikes}🤮`;
   localStorage.setItem('perricosArray', JSON.stringify(perricosArray));
+}
+
+function toggleFavorite(id) 
+{
+  const dog = perricosArray.find(p => p.id === id);
+  dog.isFavorite = !dog.isFavorite;
+  localStorage.setItem('perricosArray', JSON.stringify(perricosArray));
+  renderPerricoArray();
 }
 
 //Obtener nombre aleatorio de perrico
@@ -194,6 +206,15 @@ function addListeners()
     btn.addEventListener('click', function () {
       const nameBreed = btn.getAttribute('filter-name-breed');
       selectDogsBreed(nameBreed);
+    });
+  });
+
+  document.querySelectorAll('.favorite-star').forEach(star => {
+    star.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const card = star.closest('.card');
+      const id = Number(card.getAttribute("id"));
+      toggleFavorite(id);
     });
   });
 }
