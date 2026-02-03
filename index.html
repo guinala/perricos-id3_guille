@@ -1,26 +1,672 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script type="module" src="./api.js"></script>
-    <title>Votalperrico</title>
-    <link rel="stylesheet" href="./index.css"/>
-  </head>
-  <body>
-    <h1>Votalperrico</h1>
-    <h3>¡Elige a tus favoritos!</h3>
-    <input id="searcher-name" type="text" placeholder="Escribe un nombre...">
-    <input id="searcher-breed" type="text" placeholder="Escribe una raza...">
-    <select id="breed-list" name="breed">
-      <option value="">Cualquier raza</option>
-    </select>
-    <button id="clear-perricos">Borrar</button>
-    <a href="favoritos.html" style="margin: 5px; padding: 10px 15px; border: 2px solid #000000; border-radius: 5px; background-color: #fdf4be; display: inline-block; font-family: 'Lobster', sans-serif; text-decoration: none; color: #000000;">Ver Favoritos ⭐</a>
-    <button id="add-1-perrico">Añadir 1 perrico más</button> <button id="add-5-perricos">Añadir 5 perricos más</button>
-    <div id="name-buttons"></div>
-    <div id="breeds-buttons"></div>
-    <div id="dog-list"></div>
-  </body>
-  <script type="module" src="./index.js"></script>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votalperrico - Bienvenido</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Lobster", sans-serif;
+            overflow: hidden;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .background-slider {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .background-slider img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .background-slider img.active {
+            opacity: 0.4;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 242, 220, 0.8) 0%, rgba(253, 244, 190, 0.9) 100%);
+            z-index: 2;
+        }
+
+        .content {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+            transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
+        }
+
+        .content.shift-left {
+            transform: translateX(-25%);
+        }
+
+        h1 {
+            font-size: 120px;
+            color: #000000;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 6px rgba(255, 255, 255, 0.8);
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .tagline {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 50px;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .enter-button {
+            padding: 20px 50px;
+            font-size: 28px;
+            border: 3px solid #000000;
+            border-radius: 10px;
+            background-color: #fdf4be;
+            font-family: "Lobster", sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #000000;
+            display: inline-block;
+            animation: fadeInUp 1s ease-out 0.6s both;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .enter-button:hover {
+            background-color: #fcefa4;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .enter-button:active {
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: #000000;
+            z-index: 4;
+        }
+
+        /* Auth Panel */
+        .auth-container {
+            position: fixed;
+            right: -50%;
+            top: 0;
+            width: 45%;
+            height: 100vh;
+            z-index: 5;
+            transition: right 0.6s ease-in-out;
+            overflow: hidden;
+        }
+
+        .auth-container.active {
+            right: 0;
+        }
+
+        .auth-panel {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #FFFDF9;
+            border-left: 3px solid #000000;
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .auth-panel.slide-up {
+            transform: translateY(-100%);
+        }
+
+        .auth-panel.slide-from-bottom {
+            transform: translateY(100%);
+        }
+
+        .auth-panel.active {
+            transform: translateY(0);
+        }
+
+        .auth-panel h2 {
+            font-size: 42px;
+            margin-bottom: 30px;
+            color: #000000;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 20px;
+            color: #000000;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #000000;
+            border-radius: 5px;
+            font-size: 18px;
+            font-family: "Lobster", sans-serif;
+            background-color: #fdf4be;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            background-color: #fcefa4;
+        }
+
+        .auth-button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 10px;
+            border: 2px solid #000000;
+            border-radius: 5px;
+            background-color: #6BCF9A;
+            font-family: "Lobster", sans-serif;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in;
+            color: #000000;
+        }
+
+        .auth-button:hover {
+            background-color: #5ABB89;
+        }
+
+        .auth-button.google {
+            background-color: #fff;
+            border: 2px solid #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .auth-button.google:hover {
+            background-color: #f5f5f5;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 25px 0;
+            font-size: 18px;
+            color: #666;
+        }
+
+        .switch-text {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+            color: #666;
+        }
+
+        .switch-link {
+            color: #000000;
+            cursor: pointer;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+
+        .switch-link:hover {
+            color: #6BCF9A;
+        }
+
+        .error-message {
+            color: #F28B82;
+            font-size: 16px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .close-auth {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 30px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-family: "Lobster", sans-serif;
+            color: #000000;
+        }
+
+        .close-auth:hover {
+            color: #F28B82;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .auth-container {
+                width: 60%;
+            }
+            
+            .content.shift-left {
+                transform: translateX(-20%);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 72px;
+            }
+
+            .tagline {
+                font-size: 24px;
+            }
+
+            .enter-button {
+                font-size: 22px;
+                padding: 15px 40px;
+            }
+            
+            .auth-container {
+                width: 100%;
+                right: -100%;
+            }
+            
+            .content.shift-left {
+                transform: translateX(0);
+                opacity: 0.3;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 56px;
+            }
+
+            .tagline {
+                font-size: 20px;
+            }
+
+            .enter-button {
+                font-size: 20px;
+                padding: 12px 30px;
+            }
+            
+            .auth-panel {
+                padding: 40px 25px;
+            }
+            
+            .auth-panel h2 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-slider" id="background-slider"></div>
+    <div class="overlay"></div>
+    
+    <div class="content" id="main-content">
+        <h1>Votalperrico</h1>
+        <p class="tagline">🐕 Descubre, vota y elige a los perricos más adorables 🐕</p>
+        <button class="enter-button" id="enter-button">Entrar</button>
+    </div>
+
+    <!-- Auth Container -->
+    <div class="auth-container" id="auth-container">
+        <button class="close-auth" id="close-auth">✕</button>
+        
+        <!-- Login Panel -->
+        <div class="auth-panel active" id="login-panel">
+            <h2>Iniciar Sesión</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Contraseña</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="auth-button">Iniciar Sesión</button>
+                <div id="login-error" class="error-message"></div>
+            </form>
+            
+            <div class="divider">o</div>
+            
+            <button class="auth-button google" id="google-login">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Continuar con Google
+            </button>
+            
+            <p class="switch-text">
+                ¿No tienes cuenta? <span class="switch-link" id="show-register">Regístrate</span>
+            </p>
+        </div>
+        
+        <!-- Register Panel -->
+        <div class="auth-panel slide-from-bottom" id="register-panel">
+            <h2>Registro</h2>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Contraseña</label>
+                    <input type="password" id="register-password" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="register-password-confirm">Confirmar Contraseña</label>
+                    <input type="password" id="register-password-confirm" required minlength="6">
+                </div>
+                <button type="submit" class="auth-button">Crear Cuenta</button>
+                <div id="register-error" class="error-message"></div>
+            </form>
+            
+            <div class="divider">o</div>
+            
+            <button class="auth-button google" id="google-register">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Continuar con Google
+            </button>
+            
+            <p class="switch-text">
+                ¿Ya tienes cuenta? <span class="switch-link" id="show-login">Inicia sesión</span>
+            </p>
+        </div>
+    </div>
+
+    <div class="loading" id="loading">Cargando perritos...</div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            signOut,
+            onAuthStateChanged,
+            GoogleAuthProvider,
+            signInWithPopup,
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD3uazQqMH25YqRFV0BKfln0S3qLXgHJEY",
+            authDomain: "perricos-739ed.firebaseapp.com",
+            projectId: "perricos-739ed",
+            storageBucket: "perricos-739ed.firebasestorage.app",
+            messagingSenderId: "1019662114782",
+            appId: "1:1019662114782:web:d8fba6830dba71b6db874f"
+        };
+        
+        import { getRandomDogImage } from "./api.js";
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const NUM_IMAGES = 10;
+        let currentImageIndex = 0;
+        let images = [];
+
+        async function fetchRandomDogImages() {
+            const promises = [];
+            for (let i = 0; i < NUM_IMAGES; i++) {
+                promises.push(getRandomDogImage());
+            }
+            return Promise.all(promises);
+        }
+
+        function preloadImage(src) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(src);
+                img.onerror = reject;
+                img.src = src;
+            });
+        }
+
+        async function initSlider() {
+            try {
+                // Obtener URLs de imágenes
+                const imageUrls = await fetchRandomDogImages();
+                
+                // Precargar todas las imágenes
+                await Promise.all(imageUrls.map(url => preloadImage(url)));
+                
+                // Ocultar loading
+                document.getElementById('loading').style.display = 'none';
+                
+                // Crear elementos de imagen
+                const slider = document.getElementById('background-slider');
+                imageUrls.forEach((url, index) => {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.alt = `Perro ${index + 1}`;
+                    if (index === 0) {
+                        img.classList.add('active');
+                    }
+                    slider.appendChild(img);
+                    images.push(img);
+                });
+                
+                // Iniciar rotación automática
+                setInterval(rotateImages, 2000);
+            } catch (error) {
+                console.error('Error cargando imágenes:', error);
+                document.getElementById('loading').textContent = 'Error cargando imágenes';
+            }
+        }
+
+        function rotateImages() {
+            if (images.length === 0) return;
+            
+            images[currentImageIndex].classList.remove('active');
+            currentImageIndex = (currentImageIndex + 1) % images.length;
+            images[currentImageIndex].classList.add('active');
+        }
+
+        //Auth UI
+        const mainContent = document.getElementById('main-content');
+        const authContainer = document.getElementById('auth-container');
+        const loginPanel = document.getElementById('login-panel');
+        const registerPanel = document.getElementById('register-panel');
+
+        document.getElementById('enter-button').addEventListener('click', () => {
+            mainContent.classList.add('shift-left');
+            authContainer.classList.add('active');
+        });
+
+        document.getElementById('close-auth').addEventListener('click', () => {
+            mainContent.classList.remove('shift-left');
+            authContainer.classList.remove('active');
+        });
+
+        document.getElementById('show-register').addEventListener('click', () => {
+            loginPanel.classList.add('slide-up');
+            loginPanel.classList.remove('active');
+            registerPanel.classList.add('active');
+            registerPanel.classList.remove('slide-from-bottom');
+        });
+
+        document.getElementById('show-login').addEventListener('click', () => {
+            registerPanel.classList.remove('active');
+            registerPanel.classList.add('slide-from-bottom');
+            loginPanel.classList.add('active');
+            loginPanel.classList.remove('slide-up');
+        });
+
+        // Login
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const errorDiv = document.getElementById('login-error');
+            
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                // onAuthStateChanged se encargará de la redirección
+            } catch (error) {
+                errorDiv.textContent = getErrorMessage(error.code);
+            }
+        });
+
+        // Register
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-password-confirm').value;
+            const errorDiv = document.getElementById('register-error');
+            
+            if (password !== confirmPassword) {
+                errorDiv.textContent = 'Las contraseñas no coinciden';
+                return;
+            }
+            
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                // onAuthStateChanged se encargará de la redirección
+            } catch (error) {
+                errorDiv.textContent = getErrorMessage(error.code);
+            }
+        });
+
+        // Google Sign In
+        const provider = new GoogleAuthProvider();
+
+        // document.getElementById('google-login').addEventListener('click', async () => {
+        //     try {
+        //         await signInWithPopup(auth, provider);
+        //     } catch (error) {
+        //         document.getElementById('login-error').textContent = getErrorMessage(error.code);
+        //     }
+        // });
+
+        // document.getElementById('google-register').addEventListener('click', async () => {
+        //     try {
+        //         await signInWithPopup(auth, provider);
+        //     } catch (error) {
+        //         document.getElementById('register-error').textContent = getErrorMessage(error.code);
+        //     }
+        // });
+        document.getElementById('google-login').addEventListener('click', async () => {
+            console.log('Intentando login con Google...');
+            try {
+                const result = await signInWithPopup(auth, provider);
+                console.log('Login exitoso:', result.user);
+            } catch (error) {
+                console.error('Error completo:', error);
+                console.error('Código de error:', error.code);
+                console.error('Mensaje:', error.message);
+                document.getElementById('login-error').textContent = getErrorMessage(error.code);
+            }
+        });
+
+        document.getElementById('google-register').addEventListener('click', async () => {
+            console.log('Intentando registro con Google...');
+            try {
+                const result = await signInWithPopup(auth, provider);
+                console.log('Registro exitoso:', result.user);
+            } catch (error) {
+                console.error('Error completo:', error);
+                console.error('Código de error:', error.code);
+                console.error('Mensaje:', error.message);
+                document.getElementById('register-error').textContent = getErrorMessage(error.code);
+            }
+        });
+
+        function getErrorMessage(errorCode) {
+            switch (errorCode) {
+                case 'auth/email-already-in-use':
+                    return 'Este email ya está registrado';
+                case 'auth/invalid-email':
+                    return 'Email inválido';
+                case 'auth/weak-password':
+                    return 'La contraseña debe tener al menos 6 caracteres';
+                case 'auth/user-not-found':
+                    return 'Usuario no encontrado';
+                case 'auth/wrong-password':
+                    return 'Contraseña incorrecta';
+                default:
+                    return 'Error en la autenticación';
+            }
+        }
+
+        // Inicializar cuando carga la página
+        initSlider();
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Usuario autenticado, redirigir a index.html
+                window.location.href = 'main.html';
+            }
+        });
+    </script>
+</body>
 </html>

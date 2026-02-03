@@ -1,5 +1,10 @@
 import { getAllBreeds, getRandomDogImage, getBreedDogImage } from "./api";
 import * as dateFns from 'date-fns';
+import Swiper from 'swiper';
+import { Pagination, Navigation } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 
 let perricosArray = [];
 let breedsObject;
@@ -10,30 +15,129 @@ let selectedDogsBreeds = [];
 let idDogCounter = 0;
 let searchedContentName = '';
 let searchedContentBreed = '';
-// addPerrico();
+let swiperInstance = null;
+
+const max_dogs_per_page = 20;
+// addPerrico(); 
 
 function renderPerricoArray() {
   const dogList = document.querySelector('#dog-list');
   dogList.innerHTML = '';
 
-  perricosArray.forEach((dog, index) => {
-    const htmlAdd = ((searchedContentBreed === '' || dog.breedName.toLowerCase().startsWith(searchedContentBreed.toLowerCase())) && (searchedContentName === '' || dog.name.toLowerCase().startsWith(searchedContentName.toLowerCase())) && (selectedDogsName.length === 0 || selectedDogsName.includes(dog.name.toLowerCase())) && (selectedDogsBreeds.length === 0 || selectedDogsBreeds.includes(dog.breedName.toLowerCase())))  ? `<div class="card" id="${dog.id}">
-      <img src="${dog.img}" alt="Perro" />
-      <p class="name-text">
-        ${dog.name} 
-        <span class="favorite-star" style="cursor: pointer; font-size: 24px;">${dog.isFavorite ? '⭐' : '☆'}</span>
-      </p>
-      <p name="${dog.name}" breed="${dog.breedName}">${dog.likes}❤️ ${dog.dislikes}🤮</p>
-      <button class="precioso ${dog.isLiked ? 'precioso-selected' : ''}">Precioso</button> <button class="feo ${dog.isDisliked ? 'feo-selected' : ''}">Feo</button>
-    </div>` : '';
-
-    console.log('innerHtml posición', index, dogList.innerHTML);
-
-    dogList.innerHTML += htmlAdd;
+  const filteredPerricosArray = perricosArray.filter((dog) => {
+    const matchBreed = searchedContentBreed === '' || dog.breedName.toLowerCase().startsWith(searchedContentBreed.toLowerCase());
+    const matchName = searchedContentName === '' || dog.name.toLowerCase().startsWith(searchedContentName.toLowerCase());
+    const matchSelectedName = selectedDogsName.length === 0 || selectedDogsName.includes(dog.name.toLowerCase());
+    const matchSelectedBreed = selectedDogsBreeds.length === 0 || selectedDogsBreeds.includes(dog.breedName.toLowerCase());
+    
+    return matchBreed && matchName && matchSelectedName && matchSelectedBreed;
   });
+
+  if(filteredPerricosArray.length <= max_dogs_per_page)
+  {
+    dogList.innerHTML = '<div id="cards-container"></div>';
+    const cardsContainer = document.getElementById('cards-container');
+    cardsContainer.innerHTML = '';
+
+    filteredPerricosArray.forEach((dog) => {
+      cardsContainer.innerHTML += createCardHTML(dog);
+    });
+
+    addListeners();
+    renderBreeds();
+
+    return;
+
+  }
+
+  // Agrupar perros en páginas
+  const pages = [];
+  for (let i = 0; i < filteredPerricosArray.length; i += max_dogs_per_page) {
+    pages.push(filteredPerricosArray.slice(i, i + max_dogs_per_page));
+  }
+
+  // Crear HTML del swiper
+  let swiperHTML = `
+    <div class="swiper perros-swiper">
+      <div class="swiper-wrapper">
+  `;
+
+  pages.forEach((page, index) => {
+    swiperHTML += '<div class="swiper-slide"><div class="cards-grid">';
+    
+    page.forEach((dog) => {
+      swiperHTML += createCardHTML(dog);
+    });
+    
+    swiperHTML += '</div></div>';
+  });
+
+  swiperHTML += `
+      </div>
+      <div class="swiper-pagination"></div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div>
+  `;
+
+  dogList.innerHTML = swiperHTML;
+
+  // Destruir swiper anterior si existe
+  if (swiperInstance) {
+    swiperInstance.destroy(true, true);
+  }
+
+  // Inicializar Swiper
+  swiperInstance = new Swiper('.perros-swiper', {
+    modules: [Pagination, Navigation],
+    slidesPerView: 1,
+    spaceBetween: 0,
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+      renderBullet: function (index, className) {
+        return `<span class="${className}" style="background: #000000; width: 12px; height: 12px; margin: 0 5px;"></span>`;
+      },
+    },
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    observer: true, // Observar cambios en el DOM
+    observeParents: true,
+    observeSlideChildren: true,
+  });
+
+  // perricosArray.forEach((dog, index) => {
+  //   const htmlAdd = ((searchedContentBreed === '' || dog.breedName.toLowerCase().startsWith(searchedContentBreed.toLowerCase())) && (searchedContentName === '' || dog.name.toLowerCase().startsWith(searchedContentName.toLowerCase())) && (selectedDogsName.length === 0 || selectedDogsName.includes(dog.name.toLowerCase())) && (selectedDogsBreeds.length === 0 || selectedDogsBreeds.includes(dog.breedName.toLowerCase())))  ? `<div class="card" id="${dog.id}">
+  //     <img src="${dog.img}" alt="Perro" />
+  //     <p class="name-text">
+  //       ${dog.name} 
+  //       <span class="favorite-star" style="cursor: pointer; font-size: 24px;">${dog.isFavorite ? '⭐' : '☆'}</span>
+  //     </p>
+  //     <p name="${dog.name}" breed="${dog.breedName}">${dog.likes}❤️ ${dog.dislikes}🤮</p>
+  //     <button class="precioso ${dog.isLiked ? 'precioso-selected' : ''}">Precioso</button> <button class="feo ${dog.isDisliked ? 'feo-selected' : ''}">Feo</button>
+  //   </div>` : '';
+
+  //   console.log('innerHtml posición', index, dogList.innerHTML);
+
+  //   dogList.innerHTML += htmlAdd;
+  // });
 
   addListeners();
   renderBreeds();
+}
+
+function createCardHTML(dog) {
+  return `<div class="card" id="${dog.id}">
+    <img src="${dog.img}" alt="Perro" />
+    <p class="name-text">
+      ${dog.name} 
+      <span class="favorite-star" style="cursor: pointer; font-size: 24px;">${dog.isFavorite ? '⭐' : '☆'}</span>
+    </p>
+    <p name="${dog.name}" breed="${dog.breedName}">${dog.likes}❤️ ${dog.dislikes}🤮</p>
+    <button class="precioso ${dog.isLiked ? 'precioso-selected' : ''}">Precioso</button> <button class="feo ${dog.isDisliked ? 'feo-selected' : ''}">Feo</button>
+  </div>`;
 }
 
 const addPerrico = async () => {
@@ -111,7 +215,12 @@ function toggleFavorite(id)
   const dog = perricosArray.find(p => p.id === id);
   dog.isFavorite = !dog.isFavorite;
   localStorage.setItem('perricosArray', JSON.stringify(perricosArray));
+
+  const sliderIndex = swiperInstance ? swiperInstance.activeIndex : 0;
   renderPerricoArray();
+  if (swiperInstance && sliderIndex > 0) {
+    swiperInstance.slideTo(sliderIndex, 0); // 0 = sin animación
+  }
 }
 
 //Obtener nombre aleatorio de perrico
@@ -159,6 +268,20 @@ function selectDogsBreed(nameBreed)
 
 
   renderPerricoArray();
+}
+
+function openLightbox(imgSrc) {
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+  lightboxImg.src = imgSrc;
+  lightbox.classList.add('active');
+  document.body.style.overflow = 'hidden'; // Evitar scroll
+}
+
+function closeLightbox() {
+  const lightbox = document.getElementById('lightbox');
+  lightbox.classList.remove('active');
+  document.body.style.overflow = 'auto'; // Restaurar scroll
 }
 
 //Eventos
@@ -217,6 +340,14 @@ function addListeners()
       toggleFavorite(id);
     });
   });
+
+  document.querySelectorAll('.card img').forEach(img => {
+    img.addEventListener('click', function(e) {
+      e.stopPropagation();
+      openLightbox(img.src);
+    });
+    img.style.cursor = 'pointer'; // Indicar que es clickeable
+  });
 }
 
 function loadData()
@@ -270,6 +401,19 @@ document.querySelector('#searcher-breed').addEventListener('input', function (ev
 {
   searchedContentBreed = event.target.value;
   renderPerricoArray();
+});
+
+document.getElementById('lightbox').addEventListener('click', function(e) {
+  if (e.target.id === 'lightbox' || e.target.id === 'lightbox-close') {
+    closeLightbox();
+  }
+});
+
+// Cerrar con tecla ESC
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeLightbox();
+  }
 });
 
 function disableEnableButtons(button1, button2)
