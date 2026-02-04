@@ -282,3 +282,11 @@ img
 .lightbox-close:hover {
   transform: scale(1.2);
 }
+
+#user-profile-btn:hover {
+    background-color: #fcefa4;
+}
+
+#user-profile-btn:active {
+    transform: scale(0.95);
+}

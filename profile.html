@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - Votalperrico</title>
+    <link rel="stylesheet" href="./profile.css">
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-header">
+            <button id="back-button" class="back-button">← Volver</button>
+            <h1>Mi Perfil</h1>
+            <button id="logout-button" class="logout-button">Cerrar Sesión</button>
+        </div>
+
+        <div class="profile-content">
+            <!-- User Info -->
+            <div class="profile-section user-info">
+                <div class="user-avatar">👤</div>
+                <h2 id="user-email">Cargando...</h2>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="profile-section stats-section">
+                <h3>📊 Estadísticas Globales</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-number" id="total-favorites">0</div>
+                        <div class="stat-label">Favoritos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">❤️</div>
+                        <div class="stat-number" id="total-likes">0</div>
+                        <div class="stat-label">Me Gusta</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🤮</div>
+                        <div class="stat-number" id="total-dislikes">0</div>
+                        <div class="stat-label">Dislikes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🐕</div>
+                        <div class="stat-number" id="total-dogs">0</div>
+                        <div class="stat-label">Perros Totales</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Favoritos -->
+            <div class="profile-section favorites-section">
+                <h3>⭐ Mis Favoritos</h3>
+                <div id="favorites-list" class="favorites-grid">
+                    <p class="empty-message">No tienes favoritos todavía</p>
+                </div>
+            </div>
+
+            <!-- Historial de Acciones -->
+            <div class="profile-section history-section">
+                <h3>📜 Historial de Acciones</h3>
+                <div class="history-controls">
+                    <select id="history-filter" class="history-filter">
+                        <option value="all">Todas las acciones</option>
+                        <option value="favorite">Solo Favoritos ⭐</option>
+                        <option value="like">Solo Me Gusta ❤️</option>
+                        <option value="dislike">Solo Dislikes 🤮</option>
+                    </select>
+                </div>
+                <div class="table-container">
+                    <table id="history-table" class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>Perro</th>
+                                <th>Raza</th>
+                                <th>Acción</th>
+                                <th>Fecha y Hora</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-tbody">
+                            <tr>
+                                <td colspan="5" class="empty-message">No hay acciones registradas todavía</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="./profile.js"></script>
+</body>
+</html>

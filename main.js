@@ -1,5 +1,6 @@
 import { getAllBreeds, getRandomDogImage, getBreedDogImage } from "./api";
 import * as dateFns from 'date-fns';
+import { es } from 'date-fns/locale';
 import Swiper from 'swiper';
 import { Pagination, Navigation } from 'swiper/modules';
 import 'swiper/css';
@@ -128,6 +129,28 @@ function renderPerricoArray() {
   renderBreeds();
 }
 
+function addToHistory(action, dog) {
+  const history = JSON.parse(localStorage.getItem('userHistory') || '[]');
+  
+  const historyEntry = {
+    id: Date.now() + Math.random(), 
+    timestamp: dateFns.formatISO(new Date()),
+    action: action,
+    dogId: dog.id,
+    dogName: dog.name,
+    dogImage: dog.img,
+    dogBreed: dog.breedName
+  };
+  
+  history.unshift(historyEntry);
+  
+  if (history.length > 1000) {
+    history.pop();
+  }
+  
+  localStorage.setItem('userHistory', JSON.stringify(history));
+}
+
 function createCardHTML(dog) {
   return `<div class="card" id="${dog.id}">
     <img src="${dog.img}" alt="Perro" />
@@ -176,7 +199,7 @@ function addLike(id, button, text)
   {
     dog.likes++;
     button.classList.add('precioso-selected');
-    
+    addToHistory('like', dog); 
   }
   else
   {
@@ -197,6 +220,7 @@ function addDislike(id, button, text)
   {
     dog.dislikes++;
     button.classList.add('feo-selected');
+    addToHistory('dislike', dog);
     
   }
   else
@@ -215,6 +239,9 @@ function toggleFavorite(id)
   const dog = perricosArray.find(p => p.id === id);
   dog.isFavorite = !dog.isFavorite;
   localStorage.setItem('perricosArray', JSON.stringify(perricosArray));
+
+  if(dog.isFavorite)
+    addToHistory('favorite', dog);
 
   const sliderIndex = swiperInstance ? swiperInstance.activeIndex : 0;
   renderPerricoArray();
@@ -409,7 +436,10 @@ document.getElementById('lightbox').addEventListener('click', function(e) {
   }
 });
 
-// Cerrar con tecla ESC
+document.getElementById('user-profile-btn').addEventListener('click', () => {
+    window.location.href = 'profile.html';
+});
+
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
     closeLightbox();
