@@ -15,14 +15,30 @@
         </button>
     </div>
     <h3>¡Elige a tus favoritos!</h3>
+    <span>Método de filtrado por nombre</span>
+    <select id="filter-option-name">
+      <option value="filter-name-by-button">Botones</option>
+      <option value="filter-name-by-search">Buscador</option>
+    </select>
+    <span>Método de filtrado por raza</span>
+    <select id="filter-option-breed">
+      <option value="filter-breed-by-button">Botones</option>
+      <option value="filter-breed-by-search">Buscador</option>
+    </select>
     <input id="searcher-name" type="text" placeholder="Escribe un nombre...">
     <input id="searcher-breed" type="text" placeholder="Escribe una raza...">
     <select id="breed-list" name="breed">
       <option value="">Cualquier raza</option>
     </select>
-    <button id="clear-perricos">Borrar</button>
+    <button id="clear-perricos">Borrar Contenido</button>
     <a href="favoritos.html" style="margin: 5px; padding: 10px 15px; border: 2px solid #000000; border-radius: 5px; background-color: #fdf4be; display: inline-block; font-family: 'Lobster', sans-serif; text-decoration: none; color: #000000;">Ver Favoritos ⭐</a>
     <button id="add-1-perrico">Añadir 1 perrico más</button> <button id="add-5-perricos">Añadir 5 perricos más</button>
+    <div id="checkboxes">
+        <input type="checkbox" class="show-names-content" id="show-names">
+        <label class="show-names-content">Ocultar nombres de perro</label>
+        <input type="checkbox" class="show-breeds-content" id="show-breeds">
+        <label class="show-breeds-content">Ocultar nombres de raza</label>
+    </div>
     <div id="name-buttons"></div>
     <div id="breeds-buttons"></div>
     <div id="dog-list"></div>

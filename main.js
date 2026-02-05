@@ -1,4 +1,5 @@
 import { getAllBreeds, getRandomDogImage, getBreedDogImage } from "./api";
+import { checkAchievements } from './achievements.js';
 import * as dateFns from 'date-fns';
 import { es } from 'date-fns/locale';
 import Swiper from 'swiper';
@@ -44,11 +45,13 @@ function renderPerricoArray() {
       cardsContainer.innerHTML += createCardHTML(dog);
     });
 
+
+    renderPerricosNameButtons();
+    renderPerricosBreedButtons();
     addListeners();
     renderBreeds();
 
     return;
-
   }
 
   // Agrupar perros en páginas
@@ -125,8 +128,43 @@ function renderPerricoArray() {
   //   dogList.innerHTML += htmlAdd;
   // });
 
+  renderPerricosNameButtons();
+  renderPerricosBreedButtons();
   addListeners();
   renderBreeds();
+}
+
+
+function renderPerricosNameButtons() {
+  const nameCounts = {};
+
+  perricosArray.forEach(dog => {
+    nameCounts[dog.name] = nameCounts[dog.name] === undefined ? 1 : nameCounts[dog.name] + 1;
+  });
+
+  const nameButtonsDiv = document.querySelector('#name-buttons');
+
+  nameButtonsDiv.innerHTML = '';
+  Object.keys(nameCounts).forEach(name => {
+    const count = nameCounts[name];
+    nameButtonsDiv.innerHTML += `<button class="filter-name-button ${selectedDogsName.includes(name.toLowerCase()) ? 'filter-name-button-selected' : ''}" filter-name="${name}">${name} (${count})</button>`
+  });
+}
+
+function renderPerricosBreedButtons() {
+  const breedCounts = {};
+
+  perricosArray.forEach(dog => {
+    breedCounts[dog.breedName] = breedCounts[dog.breedName] === undefined ? 1 : breedCounts[dog.breedName] + 1;
+  });
+
+  const breedButtonsDiv = document.querySelector('#breeds-buttons');
+
+  breedButtonsDiv.innerHTML = '';
+  Object.keys(breedCounts).forEach(breedName => {
+    const count = breedCounts[breedName];
+    breedButtonsDiv.innerHTML += `<button class="filter-breed-button ${selectedDogsBreeds.includes(breedName.toLowerCase()) ? 'filter-breed-button-selected' : ''}" filter-name-breed="${breedName}">${breedName} (${count})</button>`
+  });
 }
 
 function addToHistory(action, dog) {
@@ -182,6 +220,7 @@ const addPerrico = async () => {
     likes: numbers.likes, isLiked: false, dislikes: numbers.dislikes, isDisliked: false, breedName: breed, isFavorite: false});
   localStorage.setItem('perricosArray', JSON.stringify(perricosArray));
   renderPerricoArray();
+  checkAchievements();
 };
 
 //Añadir 5 perricos
@@ -200,6 +239,7 @@ function addLike(id, button, text)
     dog.likes++;
     button.classList.add('precioso-selected');
     addToHistory('like', dog); 
+    checkAchievements();
   }
   else
   {
@@ -221,7 +261,7 @@ function addDislike(id, button, text)
     dog.dislikes++;
     button.classList.add('feo-selected');
     addToHistory('dislike', dog);
-    
+    checkAchievements();
   }
   else
   {
@@ -241,8 +281,11 @@ function toggleFavorite(id)
   localStorage.setItem('perricosArray', JSON.stringify(perricosArray));
 
   if(dog.isFavorite)
+  {
     addToHistory('favorite', dog);
-
+    checkAchievements();
+  }
+    
   const sliderIndex = swiperInstance ? swiperInstance.activeIndex : 0;
   renderPerricoArray();
   if (swiperInstance && sliderIndex > 0) {
@@ -373,7 +416,7 @@ function addListeners()
       e.stopPropagation();
       openLightbox(img.src);
     });
-    img.style.cursor = 'pointer'; // Indicar que es clickeable
+    img.style.cursor = 'pointer'; 
   });
 }
 
@@ -418,6 +461,18 @@ document.querySelector('#breed-list').addEventListener('change', function (event
   renderPerricoArray(); 
 });
 
+document.querySelector('#show-names').addEventListener('change', function (event) 
+{
+  const div = document.querySelector("#name-buttons")
+  div.style.display = event.target.checked ? 'none' : 'flex'
+});
+
+document.querySelector('#show-breeds').addEventListener('change', function (event) 
+{
+  const div = document.querySelector("#breeds-buttons")
+  div.style.display = event.target.checked ? 'none' : 'flex'
+});
+
 document.querySelector('#searcher-name').addEventListener('input', function (event) 
 {
   searchedContentName = event.target.value;
@@ -444,6 +499,62 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
     closeLightbox();
   }
+});
+
+document.querySelector('#filter-option-name').addEventListener('change', function (event) 
+{
+  const searcher = document.querySelector("#searcher-name");
+  const nameButtons = document.querySelector("#name-buttons");
+  const checkboxNames = document.querySelectorAll('.show-names-content');
+  
+  if(event.target.value === 'filter-name-by-button')
+  {
+      searcher.style.display = 'none';
+      searcher.value = '';
+      searchedContentName = '';
+      nameButtons.style.display = 'flex';
+      checkboxNames.forEach(element => {
+        element.style.display = 'inline-block';
+      });
+  }
+  else
+  {
+      searcher.style.display = 'inline-block';
+      nameButtons.style.display = 'none';
+      selectedDogsName = [];
+      checkboxNames.forEach(element => {
+        element.style.display = 'none';
+      });
+  }
+  renderPerricoArray();
+});
+
+document.querySelector('#filter-option-breed').addEventListener('change', function (event) 
+{
+  const searcher = document.querySelector("#searcher-breed");
+  const nameButtons = document.querySelector("#breeds-buttons");
+  const checkboxNames = document.querySelectorAll('.show-breeds-content');
+  
+  if(event.target.value === 'filter-breed-by-button')
+  {
+      searcher.style.display = 'none';
+      searcher.value = '';
+      searchedContentBreed = '';
+      nameButtons.style.display = 'flex';
+      checkboxNames.forEach(element => {
+        element.style.display = 'inline-block';
+      });
+  }
+  else
+  {
+      searcher.style.display = 'inline-block';
+      nameButtons.style.display = 'none';
+      selectedDogsBreeds = [];
+      checkboxNames.forEach(element => {
+        element.style.display = 'none';
+      });
+  }
+  renderPerricoArray();
 });
 
 function disableEnableButtons(button1, button2)

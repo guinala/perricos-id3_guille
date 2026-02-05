@@ -2,9 +2,11 @@ import { auth } from "./firebase_init.js";
 import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { getAchievementsStatus } from './achievements.js';
 
 let currentUser = null;
 let currentFilter = 'all';
+let achievementsFilter = 'all';
 
 onAuthStateChanged(auth, (user) => {
     if (!user) {
@@ -31,6 +33,7 @@ function loadProfile() {
 
     renderFavorites(favorites);
     renderHistory();
+    renderAchievements();
 }
 
 function renderFavorites(favorites) {
@@ -76,12 +79,11 @@ function renderHistory() {
     filteredHistory.forEach(entry => {
         const row = document.createElement('tr');
         
-        // Formatear fecha y hora
+        //Date
         const date = new Date(entry.timestamp);
         const formattedDate = format(date, "d 'de' MMMM 'de' yyyy", { locale: es });
         const formattedTime = format(date, 'HH:mm:ss', { locale: es });
 
-        // Determinar el icono y texto de la acción
         let actionText = '';
         let actionClass = '';
         switch (entry.action) {
@@ -115,6 +117,81 @@ function renderHistory() {
         tbody.appendChild(row);
     });
 }
+
+function renderAchievements() {
+    const achievements = getAchievementsStatus();
+    const grid = document.getElementById('achievements-grid');
+    
+    // Filtrar logros
+    let filteredAchievements = achievements;
+    if (achievementsFilter === 'unlocked') {
+        filteredAchievements = achievements.filter(a => a.isUnlocked);
+    } else if (achievementsFilter === 'locked') {
+        filteredAchievements = achievements.filter(a => !a.isUnlocked);
+    }
+    
+    if (filteredAchievements.length === 0) {
+        grid.innerHTML = '<p class="empty-message">No hay logros en esta categoría</p>';
+        return;
+    }
+    
+    grid.innerHTML = '';
+    
+    filteredAchievements.forEach(achievement => {
+        const card = document.createElement('div');
+        card.className = `achievement-card ${achievement.isUnlocked ? 'unlocked' : 'locked'}`;
+        
+        let progressHTML = '';
+        let unlockedHTML = '';
+        
+        if (achievement.isUnlocked) {
+            const unlockedDate = new Date(achievement.unlockedAt);
+            const formattedDate = format(unlockedDate, "d 'de' MMMM 'de' yyyy", { locale: es });
+            unlockedHTML = `
+                <div class="unlock-badge">✓ Completado</div>
+                <div class="achievement-unlocked-date">
+                    🎉 Desbloqueado el ${formattedDate}
+                </div>
+            `;
+        } else {
+            progressHTML = `
+                <div class="achievement-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${achievement.percentage}%">
+                            ${Math.round(achievement.percentage)}%
+                        </div>
+                    </div>
+                    <div class="progress-text">
+                        ${achievement.progress} / ${achievement.requirement}
+                    </div>
+                </div>
+            `;
+        }
+        
+        card.innerHTML = `
+            ${unlockedHTML}
+            <div class="achievement-header">
+                <div class="achievement-icon">${achievement.icon}</div>
+                <div class="achievement-info">
+                    <div class="achievement-name">${achievement.name}</div>
+                    <div class="achievement-description">${achievement.description}</div>
+                </div>
+            </div>
+            ${progressHTML}
+        `;
+        
+        grid.appendChild(card);
+    });
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        achievementsFilter = btn.dataset.filter;
+        renderAchievements();
+    });
+});
 
 document.getElementById('history-filter').addEventListener('change', (e) => {
     currentFilter = e.target.value;
