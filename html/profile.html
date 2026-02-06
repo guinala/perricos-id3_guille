@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Perfil - Votalperrico</title>
-    <link rel="stylesheet" href="./profile.css">
+    <title>Mi Perfil - DogTalent</title>
+    <link rel="stylesheet" href="../css/profile.css">
 </head>
 <body>
     <div class="profile-container">
@@ -15,15 +15,13 @@
         </div>
 
         <div class="profile-content">
-            <!-- User Info -->
             <div class="profile-section user-info">
                 <div class="user-avatar">👤</div>
                 <h2 id="user-email">Cargando...</h2>
             </div>
 
-            <!-- Estadísticas -->
             <div class="profile-section stats-section">
-                <h3>📊 Estadísticas Globales</h3>
+                <h3>📊 Estadísticas</h3>
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon">⭐</div>
@@ -48,7 +46,6 @@
                 </div>
             </div>
 
-            <!-- Lista de Favoritos -->
             <div class="profile-section favorites-section">
                 <h3>⭐ Mis Favoritos</h3>
                 <div id="favorites-list" class="favorites-grid">
@@ -56,7 +53,6 @@
                 </div>
             </div>
 
-            <!-- Historial de Acciones -->
             <div class="profile-section history-section">
                 <h3>📜 Historial de Acciones</h3>
                 <div class="history-controls">
@@ -86,7 +82,7 @@
                     </table>
                 </div>
             </div>
-            <!-- Logros -->
+
             <div class="profile-section achievements-section">
                 <h3>🏆 Logros</h3>
                 <div class="achievements-filter">
@@ -95,12 +91,11 @@
                     <button class="filter-btn" data-filter="locked">Bloqueados</button>
                 </div>
                 <div id="achievements-grid" class="achievements-grid">
-                    <!-- Los logros se renderizarán aquí -->
                 </div>
             </div>
         </div>
     </div>
 
-    <script type="module" src="./profile.js"></script>
+    <script type="module" src="../js/profile.js"></script>
 </body>
 </html>

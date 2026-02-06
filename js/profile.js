@@ -2,7 +2,7 @@ import { auth } from "./firebase_init.js";
 import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { getAchievementsStatus } from './achievements.js';
+import { getAchievementsStatus } from '../js/achievements.js';
 
 let currentUser = null;
 let currentFilter = 'all';

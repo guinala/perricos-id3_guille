@@ -1,5 +1,5 @@
-import { getAllBreeds, getRandomDogImage, getBreedDogImage } from "./api";
-import { checkAchievements } from './achievements.js';
+import { getAllBreeds, getRandomDogImage, getBreedDogImage } from "../js/api.js";
+import { checkAchievements } from '../js/achievements.js';
 import * as dateFns from 'date-fns';
 import { es } from 'date-fns/locale';
 import Swiper from 'swiper';
