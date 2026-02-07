@@ -1,9 +1,5 @@
 @import url('./base.css');
 
-/* ========================================
-   LAYOUT DE FAVORITOS
-======================================== */
-
 body {
     display: flex;
     flex-direction: column;
@@ -21,18 +17,10 @@ h3 {
     font-weight: normal;
 }
 
-/* ========================================
-   CONTENEDOR
-======================================== */
-
 .container {
     max-width: 500px;
     width: 100%;
 }
-
-/* ========================================
-   SWIPER (EFECTO CARDS)
-======================================== */
 
 .swiper {
     width: 100%;
@@ -71,10 +59,6 @@ h3 {
     border-radius: var(--border-radius-md);
 }
 
-/* ========================================
-   CARD INFO
-======================================== */
-
 .card-info {
     text-align: center;
     color: var(--color-text-primary);
@@ -99,10 +83,6 @@ h3 {
     margin-bottom: 20px;
     font-family: var(--font-display);
 }
-
-/* ========================================
-   MENSAJES Y NAVEGACIÓN
-======================================== */
 
 .info-text {
     text-align: center;
@@ -145,10 +125,6 @@ h3 {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
 }
-
-/* ========================================
-   RESPONSIVE
-======================================== */
 
 @media (max-width: 768px) {
     h1 {
