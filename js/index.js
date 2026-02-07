@@ -9,6 +9,7 @@ import {createUserWithEmailAndPassword,
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
 
 import { getRandomDogImage } from "./api.js";
+import { addUser } from "./firebase_database.js";
 
 const NUM_IMAGES = 10;
 let currentImageIndex = 0;
@@ -128,7 +129,9 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
     
     try 
     {
-        await createUserWithEmailAndPassword(auth, email, password);
+       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+       const user = userCredential.user;
+       await addUser(user);
     } 
     catch (error) 
     {
@@ -191,9 +194,9 @@ function getErrorMessage(errorCode) {
 
 initSlider();
 
-onAuthStateChanged(auth, (user) => {
-    if (user) 
-    {
-        window.location.href = '../html/main.html';
-    }
-});
+// onAuthStateChanged(auth, (user) => {
+//     if (user) 
+//     {
+//         window.location.href = '../html/main.html';
+//     }
+// });
