@@ -2,14 +2,13 @@ import { auth } from "./firebase_init.js";
 
 import {createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
-    signOut,
     onAuthStateChanged,
     GoogleAuthProvider,
     signInWithPopup
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
 
 import { getRandomDogImage } from "./api.js";
-import { addUser } from "./firebase_database.js";
+import { addUser, getUserData } from "./firebase_database.js";
 
 const NUM_IMAGES = 10;
 let currentImageIndex = 0;
@@ -17,7 +16,8 @@ let images = [];
 
 async function fetchRandomDogImages() {
     const promises = [];
-    for (let i = 0; i < NUM_IMAGES; i++) {
+    for (let i = 0; i < NUM_IMAGES; i++) 
+    {
         promises.push(getRandomDogImage());
     }
     return Promise.all(promises);
@@ -32,8 +32,10 @@ function preloadImage(src) {
     });
 }
 
-async function initSlider() {
-    try {
+async function initSlider() 
+{
+    try 
+    {
         const imageUrls = await fetchRandomDogImages();
         
         await Promise.all(imageUrls.map(url => preloadImage(url)));
@@ -53,7 +55,9 @@ async function initSlider() {
         });
         
         setInterval(rotateImages, 2000);
-    } catch (error) {
+    } 
+    catch (error) 
+    {
         console.error('Error cargando imágenes:', error);
         document.getElementById('loading').textContent = 'Error cargando imágenes';
     }
@@ -67,7 +71,6 @@ function rotateImages() {
     images[currentImageIndex].classList.add('active');
 }
 
-//Autenticación
 const mainContent = document.getElementById('main-content');
 const authContainer = document.getElementById('auth-container');
 const loginPanel = document.getElementById('login-panel');
@@ -97,7 +100,7 @@ document.getElementById('show-login').addEventListener('click', () => {
     loginPanel.classList.remove('slide-up');
 });
 
-// Login
+//Login
 document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('login-email').value;
@@ -132,6 +135,7 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
        const user = userCredential.user;
        await addUser(user);
+       window.location.href = '../html/main.html';
     } 
     catch (error) 
     {
@@ -149,6 +153,12 @@ document.getElementById('google-login').addEventListener('click', async () => {
     {
         const result = await signInWithPopup(auth, provider);
         console.log('Login exitoso:', result.user);
+
+        const userDoc = await getUserData(result.user.uid);
+        if (!userDoc) 
+        {
+            await addUser(result.user);
+        }
     } 
     catch (error) 
     {
@@ -165,6 +175,13 @@ document.getElementById('google-register').addEventListener('click', async () =>
     {
         const result = await signInWithPopup(auth, provider);
         console.log('Registro exitoso:', result.user);
+
+        const userDoc = await getUserData(result.user.uid);
+        if (!userDoc) 
+        {
+            await addUser(result.user);
+            window.location.href = '../html/main.html';
+        }
     } 
     catch (error) 
     {
@@ -175,8 +192,10 @@ document.getElementById('google-register').addEventListener('click', async () =>
     }
 });
 
-function getErrorMessage(errorCode) {
-    switch (errorCode) {
+function getErrorMessage(errorCode) 
+{
+    switch (errorCode) 
+    {
         case 'auth/email-already-in-use':
             return 'Este email ya está registrado';
         case 'auth/invalid-email':
@@ -194,9 +213,10 @@ function getErrorMessage(errorCode) {
 
 initSlider();
 
-// onAuthStateChanged(auth, (user) => {
-//     if (user) 
-//     {
-//         window.location.href = '../html/main.html';
-//     }
-// });
+onAuthStateChanged(auth, (user) => {
+   if (user && !document.getElementById('register-panel').classList.contains('active')) 
+   {
+        console.log("patataisdosd");
+        window.location.href = '../html/main.html'; 
+   }
+});

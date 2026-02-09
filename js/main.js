@@ -1,5 +1,17 @@
 import { getAllBreeds, getRandomDogImage, getBreedDogImage } from "../js/api.js";
-import { checkAchievements } from '../js/achievements.js';
+import { auth } from "./firebase_init.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+import { 
+  addDog, 
+  getUserDogs, 
+  updateDog, 
+  deleteAllUserDogs,
+  toggleDogFavorite,
+  toggleDogLike,
+  toggleDogDislike,
+  addToUserHistory,
+  checkAndUnlockAchievements 
+} from './firebase_database.js';
 import * as dateFns from 'date-fns';
 import { es } from 'date-fns/locale';
 import Swiper from 'swiper';
@@ -8,6 +20,7 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
+let currentUser = null;
 let perricosArray = [];
 let breedsObject;
 let chosenBreed = '';
@@ -20,9 +33,56 @@ let searchedContentBreed = '';
 let swiperInstance = null;
 
 const max_dogs_per_page = 20;
-// addPerrico(); 
 
-function renderPerricoArray() {
+onAuthStateChanged(auth, async (user) => {
+  if (!user) 
+  {
+    window.location.href = '../index.html';
+  } 
+  else 
+  {
+    currentUser = user;
+    await loadData();
+  }
+});
+
+async function loadData() 
+{
+  if (!currentUser) return;
+  
+  try 
+  {
+    const dogs = await getUserDogs(currentUser.uid);
+    
+    perricosArray = dogs.map(dog => ({
+      id: dog.id,
+      firestoreId: dog.firestoreId,
+      img: dog.img,
+      name: dog.name,
+      likes: dog.likes,
+      isLiked: dog.isLiked,
+      dislikes: dog.dislikes,
+      isDisliked: dog.isDisliked,
+      breedName: dog.breedName,
+      isFavorite: dog.isFavorite
+    }));
+    
+    if (perricosArray.length > 0) 
+    {
+      idDogCounter = Math.max(...perricosArray.map(dog => dog.id)) + 1;
+    }
+    
+    renderPerricoArray();
+  } 
+  catch (error) 
+  {
+    console.error('Error cargando datos:', error);
+    alert('Error cargando tus perros. Por favor recarga la página.');
+  }
+}
+
+function renderPerricoArray() 
+{
   const dogList = document.querySelector('#dog-list');
   dogList.innerHTML = '';
 
@@ -54,13 +114,12 @@ function renderPerricoArray() {
     return;
   }
 
-  // Agrupar perros en páginas
   const pages = [];
-  for (let i = 0; i < filteredPerricosArray.length; i += max_dogs_per_page) {
+  for (let i = 0; i < filteredPerricosArray.length; i += max_dogs_per_page) 
+  {
     pages.push(filteredPerricosArray.slice(i, i + max_dogs_per_page));
   }
 
-  // Crear HTML del swiper
   let swiperHTML = `
     <div class="swiper perros-swiper">
       <div class="swiper-wrapper">
@@ -86,8 +145,8 @@ function renderPerricoArray() {
 
   dogList.innerHTML = swiperHTML;
 
-  // Destruir swiper anterior si existe
-  if (swiperInstance) {
+  if (swiperInstance) 
+  {
     swiperInstance.destroy(true, true);
   }
 
@@ -112,22 +171,6 @@ function renderPerricoArray() {
     observeSlideChildren: true,
   });
 
-  // perricosArray.forEach((dog, index) => {
-  //   const htmlAdd = ((searchedContentBreed === '' || dog.breedName.toLowerCase().startsWith(searchedContentBreed.toLowerCase())) && (searchedContentName === '' || dog.name.toLowerCase().startsWith(searchedContentName.toLowerCase())) && (selectedDogsName.length === 0 || selectedDogsName.includes(dog.name.toLowerCase())) && (selectedDogsBreeds.length === 0 || selectedDogsBreeds.includes(dog.breedName.toLowerCase())))  ? `<div class="card" id="${dog.id}">
-  //     <img src="${dog.img}" alt="Perro" />
-  //     <p class="name-text">
-  //       ${dog.name} 
-  //       <span class="favorite-star" style="cursor: pointer; font-size: 24px;">${dog.isFavorite ? '⭐' : '☆'}</span>
-  //     </p>
-  //     <p name="${dog.name}" breed="${dog.breedName}">${dog.likes}❤️ ${dog.dislikes}🤮</p>
-  //     <button class="precioso ${dog.isLiked ? 'precioso-selected' : ''}">Precioso</button> <button class="feo ${dog.isDisliked ? 'feo-selected' : ''}">Feo</button>
-  //   </div>` : '';
-
-  //   console.log('innerHtml posición', index, dogList.innerHTML);
-
-  //   dogList.innerHTML += htmlAdd;
-  // });
-
   renderPerricosNameButtons();
   renderPerricosBreedButtons();
   addListeners();
@@ -135,7 +178,8 @@ function renderPerricoArray() {
 }
 
 
-function renderPerricosNameButtons() {
+function renderPerricosNameButtons() 
+{
   const nameCounts = {};
 
   perricosArray.forEach(dog => {
@@ -151,7 +195,8 @@ function renderPerricosNameButtons() {
   });
 }
 
-function renderPerricosBreedButtons() {
+function renderPerricosBreedButtons() 
+{
   const breedCounts = {};
 
   perricosArray.forEach(dog => {
@@ -167,29 +212,8 @@ function renderPerricosBreedButtons() {
   });
 }
 
-function addToHistory(action, dog) {
-  const history = JSON.parse(localStorage.getItem('userHistory') || '[]');
-  
-  const historyEntry = {
-    id: Date.now() + Math.random(), 
-    timestamp: dateFns.formatISO(new Date()),
-    action: action,
-    dogId: dog.id,
-    dogName: dog.name,
-    dogImage: dog.img,
-    dogBreed: dog.breedName
-  };
-  
-  history.unshift(historyEntry);
-  
-  if (history.length > 1000) {
-    history.pop();
-  }
-  
-  localStorage.setItem('userHistory', JSON.stringify(history));
-}
-
-function createCardHTML(dog) {
+function createCardHTML(dog) 
+{
   return `<div class="card" id="${dog.id}">
     <img src="${dog.img}" alt="Perro" />
     <p class="name-text">
@@ -215,85 +239,200 @@ const addPerrico = async () => {
   const numbers = getRandomLikesAndDislikes();
   const breed = perricoImg.split("/")[4];
 
-  //Añadir perrito (objeto)
-  perricosArray.push({ id: idDogCounter++, img: perricoImg, name: perricoName, 
-    likes: numbers.likes, isLiked: false, dislikes: numbers.dislikes, isDisliked: false, breedName: breed, isFavorite: false});
-  localStorage.setItem('perricosArray', JSON.stringify(perricosArray));
-  renderPerricoArray();
-  checkAchievements();
+  const dogData = {
+    id: idDogCounter++,
+    img: perricoImg,
+    name: perricoName,
+    likes: numbers.likes,
+    isLiked: false,
+    dislikes: numbers.dislikes,
+    isDisliked: false,
+    breedName: breed,
+    isFavorite: false
+  };
+
+  try 
+  {
+    const firestoreId = await addDog(currentUser.uid, dogData);
+    
+    perricosArray.push({
+      ...dogData,
+      firestoreId: firestoreId
+    });
+    
+    renderPerricoArray();
+    
+    await checkAndUnlockAchievements(currentUser.uid);
+  } 
+  catch (error) 
+  {
+    console.error('Error añadiendo perro:', error);
+    alert('Error al añadir el perro. Por favor intenta de nuevo.');
+  }
 };
 
-//Añadir 5 perricos
-async function add5Perrico() {
+async function add5Perrico() 
+{
   await Promise.all([addPerrico(), addPerrico(), addPerrico(), addPerrico(), addPerrico()]);
 }
 
-//Añadir like a la votación
-function addLike(id, button, text) 
+async function addLike(id, button, text) 
 {
-  console.log(perricosArray)
+  if (!currentUser) return;
+  
   const dog = perricosArray.find(p => p.id === id);
-  console.log(dog)
-  if(!button.classList.contains('precioso-selected'))
+  if (!dog) return;
+  
+  const wasLiked = dog.isLiked;
+  const newIsLiked = !wasLiked;
+  
+  try 
   {
-    dog.likes++;
-    button.classList.add('precioso-selected');
-    addToHistory('like', dog); 
-    checkAchievements();
-  }
-  else
-  {
-    dog.likes--;
-    button.classList.remove('precioso-selected');
-  }
-  dog.isLiked = !dog.isLiked;
-  text.textContent = `${dog.likes}❤️ ${dog.dislikes}🤮`;
-  localStorage.setItem('perricosArray', JSON.stringify(perricosArray));
-}
-
-//Añadir dislike a la votación
-function addDislike(id, button, text) 
-{
-  const dog = perricosArray.find(p => p.id === id)
-
-  if(!button.classList.contains('feo-selected'))
-  {
-    dog.dislikes++;
-    button.classList.add('feo-selected');
-    addToHistory('dislike', dog);
-    checkAchievements();
-  }
-  else
-  {
-    dog.dislikes--;
-    button.classList.remove("feo-selected");
-
-  }
-  dog.isDisliked = !dog.isDisliked;
-  text.textContent = `${dog.likes}❤️ ${dog.dislikes}🤮`;
-  localStorage.setItem('perricosArray', JSON.stringify(perricosArray));
-}
-
-function toggleFavorite(id) 
-{
-  const dog = perricosArray.find(p => p.id === id);
-  dog.isFavorite = !dog.isFavorite;
-  localStorage.setItem('perricosArray', JSON.stringify(perricosArray));
-
-  if(dog.isFavorite)
-  {
-    addToHistory('favorite', dog);
-    checkAchievements();
-  }
+    await toggleDogLike(currentUser.uid, dog.firestoreId, newIsLiked, dog.likes);
     
-  const sliderIndex = swiperInstance ? swiperInstance.activeIndex : 0;
-  renderPerricoArray();
-  if (swiperInstance && sliderIndex > 0) {
-    swiperInstance.slideTo(sliderIndex, 0); // 0 = sin animación
+    if(newIsLiked) 
+    {
+      dog.likes++;
+      button.classList.add('precioso-selected');
+
+      const historyEntry = {
+        id: Date.now() + Math.random(),
+        timestamp: dateFns.formatISO(new Date()),
+        action: 'like',
+        dogId: dog.id,
+        dogName: dog.name,
+        dogImage: dog.img,
+        dogBreed: dog.breedName
+      };
+      await addToUserHistory(currentUser.uid, historyEntry);
+    } 
+    else 
+    {
+      dog.likes--;
+      button.classList.remove('precioso-selected');
+    }
+    
+    dog.isLiked = newIsLiked;
+    text.textContent = `${dog.likes}❤️ ${dog.dislikes}🤮`;
+    
+    await checkAndUnlockAchievements(currentUser.uid);
+  } 
+  catch (error) 
+  {
+    console.error('Error actualizando like:', error);
+    alert('Error al actualizar. Por favor intenta de nuevo.');
   }
 }
 
-//Obtener nombre aleatorio de perrico
+async function addDislike(id, button, text) 
+{
+  if (!currentUser) return;
+  
+  const dog = perricosArray.find(p => p.id === id);
+  if (!dog) return;
+  
+  const wasDisliked = dog.isDisliked;
+  const newIsDisliked = !wasDisliked;
+  
+  try 
+  {
+    await toggleDogDislike(currentUser.uid, dog.firestoreId, newIsDisliked, dog.dislikes);
+    
+    if(newIsDisliked) 
+    {
+      dog.dislikes++;
+      button.classList.add('feo-selected');
+      
+      const historyEntry = {
+        id: Date.now() + Math.random(),
+        timestamp: dateFns.formatISO(new Date()),
+        action: 'dislike',
+        dogId: dog.id,
+        dogName: dog.name,
+        dogImage: dog.img,
+        dogBreed: dog.breedName
+      };
+      await addToUserHistory(currentUser.uid, historyEntry);
+    } 
+    else 
+    {
+      dog.dislikes--;
+      button.classList.remove('feo-selected');
+    }
+    
+    dog.isDisliked = newIsDisliked;
+    text.textContent = `${dog.likes}❤️ ${dog.dislikes}🤮`;
+    
+    await checkAndUnlockAchievements(currentUser.uid);
+  } 
+  catch (error) 
+  {
+    console.error('Error actualizando dislike:', error);
+    alert('Error al actualizar. Por favor intenta de nuevo.');
+  }
+}
+
+async function toggleFavorite(id) 
+{
+  if (!currentUser) return;
+  
+  const dog = perricosArray.find(p => p.id === id);
+  if (!dog) return;
+  
+  const newIsFavorite = !dog.isFavorite;
+  
+  try 
+  {
+    await toggleDogFavorite(currentUser.uid, dog.firestoreId, newIsFavorite);
+    
+    dog.isFavorite = newIsFavorite;
+
+    if (newIsFavorite) {
+      const historyEntry = {
+        id: Date.now() + Math.random(),
+        timestamp: dateFns.formatISO(new Date()),
+        action: 'favorite',
+        dogId: dog.id,
+        dogName: dog.name,
+        dogImage: dog.img,
+        dogBreed: dog.breedName
+      };
+      await addToUserHistory(currentUser.uid, historyEntry);
+    }
+    
+    renderPerricoArray();
+    
+    await checkAndUnlockAchievements(currentUser.uid);
+  } 
+  catch (error) 
+  {
+    console.error('Error actualizando favorito:', error);
+    alert('Error al actualizar favorito. Por favor intenta de nuevo.');
+  }
+}
+
+async function clearAllDogs()
+{
+  if (!currentUser) return;
+  
+  const confirmDelete = confirm('¿Estás seguro de que quieres eliminar todos tus perros? Esta acción no se puede deshacer.');
+  
+  if (!confirmDelete) return;
+  
+  try 
+  {
+    await deleteAllUserDogs(currentUser.uid);
+    perricosArray = [];
+    idDogCounter = 0;
+    renderPerricoArray();
+  } 
+  catch (error) 
+  {
+    console.error('Error eliminando perros:', error);
+    alert('Error al eliminar los perros. Por favor intenta de nuevo.');
+  }
+}
+
 function getRandomPerricoName() {
   const randomIndex = Math.floor(Math.random() * perricosNames.length);
   return perricosNames[randomIndex];
@@ -306,7 +445,6 @@ function getRandomLikesAndDislikes() {
   return numbers;
 }
 
-//Mostrar solo perros que tengan un nombre concreto
 function selectDogsName(name) 
 {
   if(selectedDogsName.includes(name.toLowerCase()))
@@ -340,18 +478,20 @@ function selectDogsBreed(nameBreed)
   renderPerricoArray();
 }
 
-function openLightbox(imgSrc) {
+function openLightbox(imgSrc) 
+{
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightbox-img');
   lightboxImg.src = imgSrc;
   lightbox.classList.add('active');
-  document.body.style.overflow = 'hidden'; // Evitar scroll
+  document.body.style.overflow = 'hidden';
 }
 
-function closeLightbox() {
+function closeLightbox() 
+{
   const lightbox = document.getElementById('lightbox');
   lightbox.classList.remove('active');
-  document.body.style.overflow = 'auto'; // Restaurar scroll
+  document.body.style.overflow = 'auto';
 }
 
 //Eventos
@@ -420,18 +560,6 @@ function addListeners()
   });
 }
 
-function loadData()
-{
-  const savedPerricos = localStorage.getItem('perricosArray');
-  if (savedPerricos) {
-    perricosArray = JSON.parse(savedPerricos);
-    if (perricosArray.length > 0) {
-      idDogCounter = Math.max(...perricosArray.map(dog => dog.id)) + 1;
-    }
-  }
-}
-
-loadData();
 renderPerricoArray();
 
 document.querySelector('#add-1-perrico').addEventListener('click', async function (event) 
@@ -443,9 +571,7 @@ document.querySelector('#add-1-perrico').addEventListener('click', async functio
 
 document.querySelector('#clear-perricos').addEventListener('click', async function (event) 
 {
-  perricosArray.length = 0;
-  localStorage.setItem('perricosArray', JSON.stringify(perricosArray));
-  renderPerricoArray();
+  await clearAllDogs();
 });
 
 document.querySelector('#add-5-perricos').addEventListener('click', async function (event) 

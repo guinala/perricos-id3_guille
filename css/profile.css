@@ -1,9 +1,5 @@
 @import url('./base.css');
 
-/* ========================================
-   LAYOUT DE PERFIL
-======================================== */
-
 body {
     padding: 20px;
 }
@@ -13,9 +9,7 @@ body {
     margin: 0 auto;
 }
 
-/* ========================================
-   HEADER
-======================================== */
+
 
 .profile-header {
     display: flex;
@@ -62,9 +56,7 @@ body {
     background: linear-gradient(135deg, var(--color-dislike-hover) 0%, var(--color-dislike-dark) 100%);
 }
 
-/* ========================================
-   CONTENIDO
-======================================== */
+
 
 .profile-content {
     display: flex;
@@ -80,9 +72,7 @@ body {
     box-shadow: var(--shadow-md);
 }
 
-/* ========================================
-   INFO DE USUARIO
-======================================== */
+
 
 .user-info {
     display: flex;
@@ -110,9 +100,7 @@ body {
     font-weight: 600;
 }
 
-/* ========================================
-   ESTADÍSTICAS
-======================================== */
+
 
 .stats-section h3,
 .favorites-section h3,
@@ -164,9 +152,7 @@ body {
     font-family: var(--font-body);
 }
 
-/* ========================================
-   FAVORITOS
-======================================== */
+
 
 .favorites-grid {
     display: grid;

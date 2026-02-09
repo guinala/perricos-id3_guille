@@ -141,7 +141,8 @@ export const ACHIEVEMENTS = [
     category: 'special',
     requirement: 1,
     checkProgress: (stats) => {
-      if (stats.totalFavorites >= 5 && stats.allFavoritesLiked) {
+      if (stats.totalFavorites >= 5 && stats.allFavoritesLiked) 
+      {
         return 1;
       }
       return 0;
@@ -149,7 +150,6 @@ export const ACHIEVEMENTS = [
   }
 ];
 
-// Stats
 export function getCurrentStats() {
   const perricosArray = JSON.parse(localStorage.getItem('perricosArray') || '[]');
   const history = JSON.parse(localStorage.getItem('userHistory') || '[]');
@@ -169,7 +169,8 @@ export function getCurrentStats() {
   };
 }
 
-export function checkAchievements() {
+export function checkAchievements() 
+{
   const stats = getCurrentStats();
   const unlockedAchievements = JSON.parse(localStorage.getItem('achievements') || '{}');
   let newUnlocks = [];
@@ -178,7 +179,8 @@ export function checkAchievements() {
     const progress = achievement.checkProgress(stats);
     const isCompleted = progress >= achievement.requirement;
     
-    if (isCompleted && !unlockedAchievements[achievement.id]) {
+    if (isCompleted && !unlockedAchievements[achievement.id]) 
+    {
       unlockedAchievements[achievement.id] = {
         unlockedAt: formatISO(new Date()),
         progress: progress,
@@ -193,7 +195,8 @@ export function checkAchievements() {
   return newUnlocks; 
 }
 
-export function getAchievementsStatus() {
+export function getAchievementsStatus() 
+{
   const stats = getCurrentStats();
   const unlockedAchievements = JSON.parse(localStorage.getItem('achievements') || '{}');
   
