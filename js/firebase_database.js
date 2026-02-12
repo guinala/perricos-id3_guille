@@ -32,12 +32,12 @@ async function addUser(user)
       achievementsProgress: {} 
     }, { merge: true });
     
-    console.log('✅ Perfil de usuario creado');
+    console.log('Perfil de usuario creado');
     return true;
   } 
   catch (error) 
   {
-    console.error('❌ Error creando perfil:', error);
+    console.error('Error creando perfil:', error);
     throw error;
   }
 }

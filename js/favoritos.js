@@ -1,6 +1,6 @@
 import { auth } from "./firebase_init.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-import { getUserDogs } from './firebase_database.js';
+import { addUser, getUserData, getUserDogs } from './firebase_database.js';
 import Swiper from 'swiper';
 import { EffectCards } from 'swiper/modules';
 import 'swiper/css';
@@ -17,6 +17,22 @@ onAuthStateChanged(auth, async (user) => {
   else 
   {
     currentUser = user;
+    
+    const userData = await getUserData(user.uid);
+    if (!userData) 
+    {
+      console.log('Usuario no encontrado en Firestore, creando perfil...');
+      try 
+      {
+        await addUser(user);
+        console.log('Perfil de usuario creado');
+      } 
+      catch (error) 
+      {
+        console.error('Error creando perfil:', error);
+      }
+    }
+    
     await loadFavorites();
   }
 });
@@ -59,7 +75,7 @@ async function loadFavorites()
             <div class="card-info">
               <p class="name">${dog.name}</p>
               <p class="breed">${dog.breedName}</p>
-              <p class="stats">${dog.likes}❤️ ${dog.dislikes}🤮</p>
+              <p class="stats">${dog.likes}❤️ ${dog.dislikes}💔</p>
             </div>
           </div>
         </div>
@@ -100,4 +116,4 @@ async function loadFavorites()
   }
 }
 
-await loadFavorites();
+//await loadFavorites();

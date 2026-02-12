@@ -1,52 +1,116 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
+<html lang="es">
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script type="module" src="../js/api.js"></script>
     <title>Votalperrico</title>
     <link rel="stylesheet" href="../css/base.css"/>
     <link rel="stylesheet" href="../css/main.css"/>
-  </head>
-  <body>
+</head>
+<body>
+    <!-- Botón de perfil -->
+    <button id="user-profile-btn" title="Mi Perfil">
+        👤
+    </button>
+
+    <!-- Botón de filtros -->
+    <button id="filters-toggle-btn" title="Filtros">
+        🔍
+    </button>
+
+    <!-- Título -->
     <h1>Votalperrico</h1>
-    <div style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
-        <button id="user-profile-btn" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #000000; background-color: #fdf4be; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s ease-in;">
-            👤
-        </button>
-    </div>
     <h3>¡Elige a tus favoritos!</h3>
-    <span>Método de filtrado por nombre</span>
-    <select id="filter-option-name">
-      <option value="filter-name-by-button">Botones</option>
-      <option value="filter-name-by-search">Buscador</option>
-    </select>
-    <span>Método de filtrado por raza</span>
-    <select id="filter-option-breed">
-      <option value="filter-breed-by-button">Botones</option>
-      <option value="filter-breed-by-search">Buscador</option>
-    </select>
-    <input id="searcher-name" type="text" placeholder="Escribe un nombre...">
-    <input id="searcher-breed" type="text" placeholder="Escribe una raza...">
-    <select id="breed-list" name="breed">
-      <option value="">Cualquier raza</option>
-    </select>
-    <button id="clear-perricos">Borrar Contenido</button>
-    <a href="favoritos.html" style="margin: 5px; padding: 10px 15px; border: 2px solid #000000; border-radius: 5px; background-color: #fdf4be; display: inline-block; font-family: 'Lobster', sans-serif; text-decoration: none; color: #000000;">Ver Favoritos ⭐</a>
-    <button id="add-1-perrico">Añadir 1 perrico más</button> <button id="add-5-perricos">Añadir 5 perricos más</button>
-    <div id="checkboxes">
-        <input type="checkbox" class="show-names-content" id="show-names">
-        <label class="show-names-content">Ocultar nombres de perro</label>
-        <input type="checkbox" class="show-breeds-content" id="show-breeds">
-        <label class="show-breeds-content">Ocultar nombres de raza</label>
+
+    <!-- Contenedor principal -->
+    <div class="main-wrapper" id="main-wrapper">
+        <!-- Sección de acciones -->
+        <div class="actions-section">
+            <div class="actions-grid">
+                <div class="action-group">
+                    <label class="action-label">Seleccionar raza para añadir</label>
+                    <select id="breed-list" name="breed">
+                        <option value="">Cualquier raza</option>
+                    </select>
+                </div>
+                <div class="action-group">
+                    <label class="action-label">Añadir perros</label>
+                    <button id="add-1-perrico">+ 1 Perro</button>
+                </div>
+                <div class="action-group">
+                    <label class="action-label">Añadir varios</label>
+                    <button id="add-5-perricos">+ 5 Perros</button>
+                </div>
+                <div class="action-group">
+                    <label class="action-label">Ver favoritos</label>
+                    <a href="favoritos.html" class="btn-link">⭐ Favoritos</a>
+                </div>
+                <div class="action-group">
+                    <label class="action-label">Eliminar todo</label>
+                    <button id="clear-perricos">🗑️ Borrar Todo</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de perros -->
+        <div id="dog-list"></div>
     </div>
-    <div id="name-buttons"></div>
-    <div id="breeds-buttons"></div>
-    <div id="dog-list"></div>
+
+    <!-- Panel lateral de filtros -->
+    <div class="filters-panel" id="filters-panel">
+        <button class="close-filters" id="close-filters">✕</button>
+        
+        <div class="filters-panel-content">
+            <h2>Filtros</h2>
+            
+            <!-- Filtros de búsqueda y raza -->
+            <div class="filter-section">
+                <h3>Búsqueda</h3>
+                <div class="filter-group">
+                    <label class="filter-label" for="searcher-name">🔍 Buscar por nombre</label>
+                    <input id="searcher-name" type="text" placeholder="Escribe un nombre...">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label" for="breed-filter-select">🐕 Filtrar por raza</label>
+                    <select id="breed-filter-select">
+                        <option value="">Todas las razas</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Filtros de estado -->
+            <div class="filter-section">
+                <h3>Estado</h3>
+                <div class="status-filters-vertical">
+                    <button id="filter-liked" class="status-filter-btn" data-filter="liked">
+                        <span class="icon">❤️</span>
+                        <span>Me gusta</span>
+                        <span class="count">0</span>
+                    </button>
+                    <button id="filter-disliked" class="status-filter-btn" data-filter="disliked">
+                        <span class="icon">💔</span>
+                        <span>No me gusta</span>
+                        <span class="count">0</span>
+                    </button>
+                    <button id="filter-favorites" class="status-filter-btn" data-filter="favorites">
+                        <span class="icon">⭐</span>
+                        <span>Favoritos</span>
+                        <span class="count">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay para cerrar el panel al hacer clic fuera -->
+    <div class="filters-overlay" id="filters-overlay"></div>
+
+    <!-- Lightbox para imágenes -->
     <div class="lightbox" id="lightbox">
-      <button class="lightbox-close" id="lightbox-close">✕</button>
-      <img src="" alt="Imagen ampliada" id="lightbox-img">
+        <button class="lightbox-close" id="lightbox-close">✕</button>
+        <img src="" alt="Imagen ampliada" id="lightbox-img">
     </div>
-  </body>
-  <script type="module" src="../js/main.js"></script>
+
+    <script type="module" src="../js/main.js"></script>
+</body>
 </html>
