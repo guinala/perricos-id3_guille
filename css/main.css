@@ -1,9 +1,5 @@
 @import url('./base.css');
 
-/* ========================================
-   LAYOUT PRINCIPAL
-======================================== */
-
 body {
     display: flex;
     flex-direction: column;
@@ -24,10 +20,6 @@ h3 {
     text-align: center;
     color: var(--color-text-secondary);
 }
-
-/* ========================================
-   BOTONES FIJOS
-======================================== */
 
 #user-profile-btn,
 #filters-toggle-btn {
@@ -63,10 +55,6 @@ h3 {
     box-shadow: var(--shadow-lg);
 }
 
-/* ========================================
-   MAIN WRAPPER (se desplaza cuando el panel se abre)
-======================================== */
-
 .main-wrapper {
     width: 100%;
     max-width: 1400px;
@@ -77,9 +65,10 @@ h3 {
     transform: translateX(15%);
 }
 
-/* ========================================
-   PANEL LATERAL DE FILTROS
-======================================== */
+.main-title, .main-subtitle
+{
+    font-family: var(--font-display);
+}
 
 .filters-panel {
     position: fixed;
@@ -137,7 +126,6 @@ h3 {
     transform: rotate(90deg);
 }
 
-/* Secciones dentro del panel */
 .filter-section {
     margin-bottom: 35px;
     padding-bottom: 25px;
@@ -186,7 +174,6 @@ h3 {
     box-shadow: 0 0 0 3px rgba(127, 200, 169, 0.2);
 }
 
-/* Botones de filtro de estado (vertical en el panel) */
 .status-filters-vertical {
     display: flex;
     flex-direction: column;
@@ -265,7 +252,6 @@ h3 {
     background: rgba(255, 255, 255, 0.5);
 }
 
-/* Overlay oscuro cuando el panel está abierto */
 .filters-overlay {
     position: fixed;
     top: 0;

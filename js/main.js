@@ -26,8 +26,6 @@ let perricosArray = [];
 let breedsObject;
 let chosenBreed = '';
 const perricosNames = ['Firulais', 'Luna', 'Thor', 'Pastelito de Fresa', 'Rocky', 'Duke', 'Buddy', 'Loki', 'Nara'];
-// let selectedDogsName = [];
-// let selectedDogsBreeds = [];
 let idDogCounter = 0;
 let searchedContentName = '';
 let swiperInstance = null;
@@ -48,37 +46,6 @@ onAuthStateChanged(auth, async (user) => {
 
 async function loadData() 
 {
-  // if (!currentUser) return;
-  
-  // try 
-  // {
-  //   const dogs = await getUserDogs(currentUser.uid);
-    
-  //   perricosArray = dogs.map(dog => ({
-  //     id: dog.id,
-  //     firestoreId: dog.firestoreId,
-  //     img: dog.img,
-  //     name: dog.name,
-  //     likes: dog.likes,
-  //     isLiked: dog.isLiked,
-  //     dislikes: dog.dislikes,
-  //     isDisliked: dog.isDisliked,
-  //     breedName: dog.breedName,
-  //     isFavorite: dog.isFavorite
-  //   }));
-    
-  //   if (perricosArray.length > 0) 
-  //   {
-  //     idDogCounter = Math.max(...perricosArray.map(dog => dog.id)) + 1;
-  //   }
-    
-  //   renderPerricoArray();
-  // } 
-  // catch (error) 
-  // {
-  //   console.error('Error cargando datos:', error);
-  //   alert('Error cargando tus perros. Por favor recarga la página.');
-  // }
   if (!currentUser) return;
   
   try {
@@ -101,8 +68,8 @@ async function loadData()
       idDogCounter = Math.max(...perricosArray.map(dog => dog.id)) + 1;
     }
     
-    updateFilterCounts();  // ← AÑADIR
-    updateBreedFilterSelect();  // ← AÑADIR
+    updateFilterCounts();  
+    updateBreedFilterSelect();  
     renderPerricoArray();
   } catch (error) {
     console.error('Error cargando datos:', error);
@@ -115,24 +82,13 @@ function renderPerricoArray()
   const dogList = document.querySelector('#dog-list');
   dogList.innerHTML = '';
 
-  // const filteredPerricosArray = perricosArray.filter((dog) => {
-  //   const matchBreed = searchedContentBreed === '' || dog.breedName.toLowerCase().startsWith(searchedContentBreed.toLowerCase());
-  //   const matchName = searchedContentName === '' || dog.name.toLowerCase().startsWith(searchedContentName.toLowerCase());
-  //   const matchSelectedName = selectedDogsName.length === 0 || selectedDogsName.includes(dog.name.toLowerCase());
-  //   const matchSelectedBreed = selectedDogsBreeds.length === 0 || selectedDogsBreeds.includes(dog.breedName.toLowerCase());
-    
-  //   return matchBreed && matchName && matchSelectedName && matchSelectedBreed;
-  // });
   const filteredPerricosArray = perricosArray.filter((dog) => {
-    // Filtro por nombre (búsqueda)
     const matchName = searchedContentName === '' || 
                       dog.name.toLowerCase().startsWith(searchedContentName.toLowerCase());
     
-    // Filtro por raza (select)
     const matchBreed = searchedContentBreed === '' || 
                        dog.breedName.toLowerCase() === searchedContentBreed.toLowerCase();
     
-    // Filtro por estado (botones de filtro)
     let matchStatus = true;
     if (currentStatusFilter === 'liked') {
       matchStatus = dog.isLiked;
@@ -155,9 +111,6 @@ function renderPerricoArray()
       cardsContainer.innerHTML += createCardHTML(dog);
     });
 
-
-    // renderPerricosNameButtons();
-    // renderPerricosBreedButtons();
     addListeners();
     renderBreeds();
 
@@ -200,7 +153,6 @@ function renderPerricoArray()
     swiperInstance.destroy(true, true);
   }
 
-  // Inicializar Swiper
   swiperInstance = new Swiper('.perros-swiper', {
     modules: [Pagination, Navigation],
     slidesPerView: 1,
@@ -216,13 +168,11 @@ function renderPerricoArray()
       nextEl: '.swiper-button-next',
       prevEl: '.swiper-button-prev',
     },
-    observer: true, // Observar cambios en el DOM
+    observer: true,
     observeParents: true,
     observeSlideChildren: true,
   });
 
-  // renderPerricosNameButtons();
-  // renderPerricosBreedButtons();
   addListeners();
   renderBreeds();
 }
@@ -241,10 +191,8 @@ function updateBreedFilterSelect() {
   const breedFilterSelect = document.querySelector('#breed-filter-select');
   const currentValue = breedFilterSelect.value;
   
-  // Obtener razas únicas de los perros actuales
   const uniqueBreeds = [...new Set(perricosArray.map(dog => dog.breedName))].sort();
   
-  // Limpiar y repoblar
   breedFilterSelect.innerHTML = '<option value="">Todas las razas</option>';
   uniqueBreeds.forEach(breed => {
     const option = document.createElement('option');
@@ -253,57 +201,13 @@ function updateBreedFilterSelect() {
     breedFilterSelect.appendChild(option);
   });
   
-  // Restaurar valor si aún existe
   if (uniqueBreeds.includes(currentValue)) {
     breedFilterSelect.value = currentValue;
   }
 }
 
-// function renderPerricosNameButtons() 
-// {
-//   const nameCounts = {};
-
-//   perricosArray.forEach(dog => {
-//     nameCounts[dog.name] = nameCounts[dog.name] === undefined ? 1 : nameCounts[dog.name] + 1;
-//   });
-
-//   const nameButtonsDiv = document.querySelector('#name-buttons');
-
-//   nameButtonsDiv.innerHTML = '';
-//   Object.keys(nameCounts).forEach(name => {
-//     const count = nameCounts[name];
-//     nameButtonsDiv.innerHTML += `<button class="filter-name-button ${selectedDogsName.includes(name.toLowerCase()) ? 'filter-name-button-selected' : ''}" filter-name="${name}">${name} (${count})</button>`
-//   });
-// }
-
-// function renderPerricosBreedButtons() 
-// {
-//   const breedCounts = {};
-
-//   perricosArray.forEach(dog => {
-//     breedCounts[dog.breedName] = breedCounts[dog.breedName] === undefined ? 1 : breedCounts[dog.breedName] + 1;
-//   });
-
-//   const breedButtonsDiv = document.querySelector('#breeds-buttons');
-
-//   breedButtonsDiv.innerHTML = '';
-//   Object.keys(breedCounts).forEach(breedName => {
-//     const count = breedCounts[breedName];
-//     breedButtonsDiv.innerHTML += `<button class="filter-breed-button ${selectedDogsBreeds.includes(breedName.toLowerCase()) ? 'filter-breed-button-selected' : ''}" filter-name-breed="${breedName}">${breedName} (${count})</button>`
-//   });
-// }
-
 function createCardHTML(dog) 
 {
-  // return `<div class="card" id="${dog.id}">
-  //   <img src="${dog.img}" alt="Perro" />
-  //   <p class="name-text">
-  //     ${dog.name} 
-  //     <span class="favorite-star" style="cursor: pointer; font-size: 24px;">${dog.isFavorite ? '⭐' : '☆'}</span>
-  //   </p>
-  //   <p name="${dog.name}" breed="${dog.breedName}">${dog.likes}❤️ ${dog.dislikes}🤮</p>
-  //   <button class="precioso ${dog.isLiked ? 'precioso-selected' : ''}">Precioso</button> <button class="feo ${dog.isDisliked ? 'feo-selected' : ''}">Feo</button>
-  // </div>`;
   return `<div class="card" id="${dog.id}">
     <img src="${dog.img}" alt="Perro" />
     <p class="name-text">
@@ -411,9 +315,7 @@ async function addLike(id, button, text)
     dog.isLiked = newIsLiked;
     text.textContent = `${dog.likes}❤️ ${dog.dislikes}💔`;
     
-    //renderPerricoArray();
     updateFilterCounts();
-    //updateBreedFilterSelect();
     await checkAndUnlockAchievements(currentUser.uid);
   } 
   catch (error) 
@@ -462,9 +364,7 @@ async function addDislike(id, button, text)
     dog.isDisliked = newIsDisliked;
     text.textContent = `${dog.likes}❤️ ${dog.dislikes}💔`;
     
-    //renderPerricoArray();
     updateFilterCounts();
-    //updateBreedFilterSelect();
     await checkAndUnlockAchievements(currentUser.uid);
   } 
   catch (error) 
@@ -549,39 +449,6 @@ function getRandomLikesAndDislikes() {
   return numbers;
 }
 
-// function selectDogsName(name) 
-// {
-//   if(selectedDogsName.includes(name.toLowerCase()))
-//   {
-//     const index = selectedDogsName.indexOf(name.toLowerCase());
-//     selectedDogsName.splice(index, 1);
-//   }
-
-//   else
-//   {
-//     selectedDogsName.push(name.toLowerCase());
-//   }
-
-//   renderPerricoArray();
-// }
-
-// function selectDogsBreed(nameBreed) 
-// {
-//   if(selectedDogsBreeds.includes(nameBreed.toLowerCase()))
-//   {
-//     const index = selectedDogsBreeds.indexOf(nameBreed.toLowerCase());
-//     selectedDogsBreeds.splice(index, 1);
-//   }
-
-//   else
-//   {
-//     selectedDogsBreeds.push(nameBreed.toLowerCase());
-//   }
-
-
-//   renderPerricoArray();
-// }
-
 function openLightbox(imgSrc) 
 {
   const lightbox = document.getElementById('lightbox');
@@ -602,21 +469,8 @@ function closeLightbox()
 function addListeners()
 {
   document.querySelectorAll('.precioso').forEach(btn => {
-    // btn.addEventListener('click', async function () {
-    //   const card = btn.closest('.card');
-    //   const id = Number(card.getAttribute("id"));
-    //   console.log(id)
-    //   //const text = card.querySelector('p[name]');
-    //   await addLike(id, btn);
-
-    //   const disLikeBtn = card.querySelector('.feo');
-    //   if(disLikeBtn.classList.contains('feo-selected'))
-    //   {
-    //     await addDislike(id, disLikeBtn);
-    //   }
-    // });
     btn.addEventListener('click', async function () {
-      const card      = btn.closest('.card');           // ✅ closest, no parentElement
+      const card      = btn.closest('.card');           
       const id        = Number(card.getAttribute('id'));
       const statsText = card.querySelector('.stats-text');
 
@@ -624,7 +478,6 @@ function addListeners()
       try {
         await addLike(id, btn, statsText);
 
-        // Si había dislike activo, quitarlo
         const dislikeBtn = card.querySelector('.feo');
         if (dislikeBtn.classList.contains('feo-selected')) {
           await addDislike(id, dislikeBtn, statsText);
@@ -638,20 +491,8 @@ function addListeners()
   });
 
   document.querySelectorAll('.feo').forEach(btn => {
-    // btn.addEventListener('click', async function () {
-    //   const card = btn.parentElement;
-    //   const id = Number(card.getAttribute("id"));
-    //   //const text = card.querySelector('p[name]');
-    //   await addDislike(id, btn);
-
-    //   const likeBtn = card.querySelector('.precioso');
-    //   if(likeBtn.classList.contains('precioso-selected'))
-    //   {
-    //     await addLike(id, likeBtn);
-    //   }
-    // });
     btn.addEventListener('click', async function () {
-      const card      = btn.closest('.card');           // ✅ closest, no parentElement
+      const card      = btn.closest('.card');           
       const id        = Number(card.getAttribute('id'));
       const statsText = card.querySelector('.stats-text');
 
@@ -659,7 +500,6 @@ function addListeners()
       try {
         await addDislike(id, btn, statsText);
 
-        // Si había like activo, quitarlo
         const likeBtn = card.querySelector('.precioso');
         if (likeBtn.classList.contains('precioso-selected')) {
           await addLike(id, likeBtn, statsText);
@@ -671,20 +511,6 @@ function addListeners()
       }
     });
   });
-
-  // document.querySelectorAll('.filter-name-button').forEach(btn => {
-  //   btn.addEventListener('click', function () {
-  //     const name = btn.getAttribute('filter-name');
-  //     selectDogsName(name);
-  //   });
-  // });
-
-  // document.querySelectorAll('.filter-breed-button').forEach(btn => {
-  //   btn.addEventListener('click', function () {
-  //     const nameBreed = btn.getAttribute('filter-name-breed');
-  //     selectDogsBreed(nameBreed);
-  //   });
-  // });
 
   document.querySelectorAll('.favorite-star').forEach(star => {
     star.addEventListener('click', function(e) {
@@ -728,20 +554,7 @@ document.querySelector('#add-5-perricos').addEventListener('click', async functi
 document.querySelector('#breed-list').addEventListener('change', function (event) 
 {
   chosenBreed = event.target.value;
-  // renderPerricoArray(); 
 });
-
-// document.querySelector('#show-names').addEventListener('change', function (event) 
-// {
-//   const div = document.querySelector("#name-buttons")
-//   div.style.display = event.target.checked ? 'none' : 'flex'
-// });
-
-// document.querySelector('#show-breeds').addEventListener('change', function (event) 
-// {
-//   const div = document.querySelector("#breeds-buttons")
-//   div.style.display = event.target.checked ? 'none' : 'flex'
-// });
 
 document.querySelector('#searcher-name').addEventListener('input', function (event) 
 {
@@ -753,12 +566,6 @@ document.querySelector('#breed-filter-select').addEventListener('change', functi
   searchedContentBreed = event.target.value;
   renderPerricoArray();
 });
-
-// document.querySelector('#searcher-breed').addEventListener('input', function (event) 
-// {
-//   searchedContentBreed = event.target.value;
-//   renderPerricoArray();
-// });
 
 document.getElementById('lightbox').addEventListener('click', function(e) {
   if (e.target.id === 'lightbox' || e.target.id === 'lightbox-close') {
@@ -780,14 +587,11 @@ document.querySelectorAll('.status-filter-btn').forEach(btn => {
   btn.addEventListener('click', function() {
     const filter = btn.dataset.filter;
     
-    // Toggle del filtro
     if (currentStatusFilter === filter) {
       currentStatusFilter = '';
       btn.classList.remove('active');
     } else {
-      // Desactivar todos
       document.querySelectorAll('.status-filter-btn').forEach(b => b.classList.remove('active'));
-      // Activar el clickeado
       currentStatusFilter = filter;
       btn.classList.add('active');
     }
@@ -795,62 +599,6 @@ document.querySelectorAll('.status-filter-btn').forEach(btn => {
     renderPerricoArray();
   });
 });
-
-// document.querySelector('#filter-option-name').addEventListener('change', function (event) 
-// {
-//   const searcher = document.querySelector("#searcher-name");
-//   const nameButtons = document.querySelector("#name-buttons");
-//   const checkboxNames = document.querySelectorAll('.show-names-content');
-  
-//   if(event.target.value === 'filter-name-by-button')
-//   {
-//       searcher.style.display = 'none';
-//       searcher.value = '';
-//       searchedContentName = '';
-//       nameButtons.style.display = 'flex';
-//       checkboxNames.forEach(element => {
-//         element.style.display = 'inline-block';
-//       });
-//   }
-//   else
-//   {
-//       searcher.style.display = 'inline-block';
-//       nameButtons.style.display = 'none';
-//       selectedDogsName = [];
-//       checkboxNames.forEach(element => {
-//         element.style.display = 'none';
-//       });
-//   }
-//   renderPerricoArray();
-// });
-
-// document.querySelector('#filter-option-breed').addEventListener('change', function (event) 
-// {
-//   const searcher = document.querySelector("#searcher-breed");
-//   const nameButtons = document.querySelector("#breeds-buttons");
-//   const checkboxNames = document.querySelectorAll('.show-breeds-content');
-  
-//   if(event.target.value === 'filter-breed-by-button')
-//   {
-//       searcher.style.display = 'none';
-//       searcher.value = '';
-//       searchedContentBreed = '';
-//       nameButtons.style.display = 'flex';
-//       checkboxNames.forEach(element => {
-//         element.style.display = 'inline-block';
-//       });
-//   }
-//   else
-//   {
-//       searcher.style.display = 'inline-block';
-//       nameButtons.style.display = 'none';
-//       selectedDogsBreeds = [];
-//       checkboxNames.forEach(element => {
-//         element.style.display = 'none';
-//       });
-//   }
-//   renderPerricoArray();
-// });
 
 function disableEnableButtons(button1, button2)
 {
@@ -879,21 +627,18 @@ const filtersPanel = document.getElementById('filters-panel');
 const filtersOverlay = document.getElementById('filters-overlay');
 const mainWrapper = document.getElementById('main-wrapper');
 
-// Abrir panel de filtros
 document.getElementById('filters-toggle-btn').addEventListener('click', () => {
   filtersPanel.classList.add('active');
   filtersOverlay.classList.add('active');
   mainWrapper.classList.add('shift-right');
 });
 
-// Cerrar panel (botón X)
 document.getElementById('close-filters').addEventListener('click', () => {
   filtersPanel.classList.remove('active');
   filtersOverlay.classList.remove('active');
   mainWrapper.classList.remove('shift-right');
 });
 
-// Cerrar panel (click fuera - overlay)
 filtersOverlay.addEventListener('click', () => {
   filtersPanel.classList.remove('active');
   filtersOverlay.classList.remove('active');

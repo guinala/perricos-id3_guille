@@ -8,23 +8,18 @@
     <link rel="stylesheet" href="../css/main.css"/>
 </head>
 <body>
-    <!-- Botón de perfil -->
     <button id="user-profile-btn" title="Mi Perfil">
         👤
     </button>
 
-    <!-- Botón de filtros -->
     <button id="filters-toggle-btn" title="Filtros">
         🔍
     </button>
 
-    <!-- Título -->
-    <h1>Votalperrico</h1>
-    <h3>¡Elige a tus favoritos!</h3>
+    <h1 class="main-title">Votalperrico</h1>
+    <h3 class="main-subtitle">¡Elige a tus favoritos!</h3>
 
-    <!-- Contenedor principal -->
-    <div class="main-wrapper" id="main-wrapper">
-        <!-- Sección de acciones -->
+    <div class="main-wrapper">
         <div class="actions-section">
             <div class="actions-grid">
                 <div class="action-group">
@@ -52,18 +47,15 @@
             </div>
         </div>
 
-        <!-- Lista de perros -->
         <div id="dog-list"></div>
     </div>
 
-    <!-- Panel lateral de filtros -->
     <div class="filters-panel" id="filters-panel">
         <button class="close-filters" id="close-filters">✕</button>
         
         <div class="filters-panel-content">
             <h2>Filtros</h2>
             
-            <!-- Filtros de búsqueda y raza -->
             <div class="filter-section">
                 <h3>Búsqueda</h3>
                 <div class="filter-group">
@@ -78,7 +70,6 @@
                 </div>
             </div>
 
-            <!-- Filtros de estado -->
             <div class="filter-section">
                 <h3>Estado</h3>
                 <div class="status-filters-vertical">
@@ -102,10 +93,8 @@
         </div>
     </div>
 
-    <!-- Overlay para cerrar el panel al hacer clic fuera -->
     <div class="filters-overlay" id="filters-overlay"></div>
 
-    <!-- Lightbox para imágenes -->
     <div class="lightbox" id="lightbox">
         <button class="lightbox-close" id="lightbox-close">✕</button>
         <img src="" alt="Imagen ampliada" id="lightbox-img">
